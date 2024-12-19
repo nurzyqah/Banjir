@@ -36,7 +36,7 @@ document.addEventListener('DOMContentLoaded', () => {
             try {
                 const jsonData = JSON.parse(data.contents);
                 console.log('Parsed Aliran Jumlah Mangsa data:', jsonData);
-                displayFlowChart(jsonData, 'flowChart', 'Jumlah Mangsa');
+                displayFlowChart(jsonData, 'flowChart', 'Jumlah Mangsa', 'mangsa');
             } catch (error) {
                 console.error('Ralat dalam memproses data Aliran Jumlah Mangsa:', error.message);
             }
@@ -51,7 +51,7 @@ document.addEventListener('DOMContentLoaded', () => {
             try {
                 const jsonData = JSON.parse(data.contents);
                 console.log('Parsed Aliran Mangsa Masuk data:', jsonData);
-                displayFlowChart(jsonData, 'flowChartIn', 'Mangsa Masuk');
+                displayFlowChart(jsonData, 'flowChartIn', 'Mangsa Masuk', 'masuk');
             } catch (error) {
                 console.error('Ralat dalam memproses data Aliran Mangsa Masuk:', error.message);
             }
@@ -66,7 +66,7 @@ document.addEventListener('DOMContentLoaded', () => {
             try {
                 const jsonData = JSON.parse(data.contents);
                 console.log('Parsed Aliran Mangsa Keluar data:', jsonData);
-                displayFlowChart(jsonData, 'flowChartOut', 'Mangsa Keluar');
+                displayFlowChart(jsonData, 'flowChartOut', 'Mangsa Keluar', 'balik');
             } catch (error) {
                 console.error('Ralat dalam memproses data Aliran Mangsa Keluar:', error.message);
             }
@@ -234,17 +234,17 @@ function displayCategoryChart(data) {
 }
 
 // Function to display flow chart for Total Mangsa, Mangsa Masuk, and Mangsa Keluar
-function displayFlowChart(data, chartId, label) {
+function displayFlowChart(data, chartId, label, key) {
     const ctx = document.getElementById(chartId).getContext('2d');
     let labels = [];
     let values = [];
 
     console.log('Data for flow chart:', data);
 
-    if (data && data.tarikh && data.mangsa) {
+    if (data && data.tarikh && data[key]) {
         data.tarikh.forEach((date, index) => {
             labels.push(date); // Add the date
-            values.push(data.mangsa[index]); // Add the value (number of victims)
+            values.push(data[key][index]); // Add the value (number of victims)
         });
 
         const chartData = {
