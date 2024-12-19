@@ -119,28 +119,20 @@ function loadMap() {
         attribution: '&copy; OpenStreetMap contributors',
     }).addTo(map);
 
-    const geojsonUrlSemenanjung = 'https://api.codetabs.com/v1/proxy/?quest=' + encodeURIComponent('https://infobencanajkmv2.jkm.gov.my/assets/data/malaysia/arcgis_district_semenanjung.geojson');
-    const geojsonUrlBorneo = 'https://api.codetabs.com/v1/proxy/?quest=' + encodeURIComponent('https://infobencanajkmv2.jkm.gov.my/assets/data/malaysia/arcgis_district_borneo.geojson');
+    const geojsonUrlSemenanjung = 'https://infobencanajkmv2.jkm.gov.my/assets/data/malaysia/arcgis_district_semenanjung.geojson';
+    const geojsonUrlBorneo = 'https://infobencanajkmv2.jkm.gov.my/assets/data/malaysia/arcgis_district_borneo.geojson';
 
     fetch(geojsonUrlSemenanjung)
         .then(response => response.json())
         .then(data => {
-            if (data.contents) {
-                L.geoJSON(JSON.parse(data.contents)).addTo(map);
-            } else {
-                console.error('Respons yang tidak sah untuk Semenanjung geojson:', data);
-            }
+            L.geoJSON(data).addTo(map);
         })
         .catch(error => console.error('Ralat memuatkan geojson Semenanjung:', error));
 
     fetch(geojsonUrlBorneo)
         .then(response => response.json())
         .then(data => {
-            if (data.contents) {
-                L.geoJSON(JSON.parse(data.contents)).addTo(map);
-            } else {
-                console.error('Respons yang tidak sah untuk Borneo geojson:', data);
-            }
+            L.geoJSON(data).addTo(map);
         })
         .catch(error => console.error('Ralat memuatkan geojson Borneo:', error));
 }
