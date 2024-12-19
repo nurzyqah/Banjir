@@ -32,6 +32,7 @@ document.addEventListener('DOMContentLoaded', () => {
     fetch(apiUrlAliranMangsa)
         .then(response => response.json())
         .then(data => {
+            console.log('Aliran Jumlah Mangsa data:', data);
             try {
                 const jsonData = JSON.parse(data.contents);
                 displayFlowChart(jsonData, 'flowChart', 'Jumlah Mangsa');
@@ -45,6 +46,7 @@ document.addEventListener('DOMContentLoaded', () => {
     fetch(apiUrlAliranMasuk)
         .then(response => response.json())
         .then(data => {
+            console.log('Aliran Mangsa Masuk data:', data);
             try {
                 const jsonData = JSON.parse(data.contents);
                 displayFlowChart(jsonData, 'flowChartIn', 'Mangsa Masuk');
@@ -58,6 +60,7 @@ document.addEventListener('DOMContentLoaded', () => {
     fetch(apiUrlAliranKeluar)
         .then(response => response.json())
         .then(data => {
+            console.log('Aliran Mangsa Keluar data:', data);
             try {
                 const jsonData = JSON.parse(data.contents);
                 displayFlowChart(jsonData, 'flowChartOut', 'Mangsa Keluar');
