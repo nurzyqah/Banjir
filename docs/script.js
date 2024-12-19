@@ -35,6 +35,7 @@ document.addEventListener('DOMContentLoaded', () => {
             console.log('Aliran Jumlah Mangsa data:', data);
             try {
                 const jsonData = JSON.parse(data.contents);
+                console.log('Parsed Aliran Jumlah Mangsa data:', jsonData);
                 displayFlowChart(jsonData, 'flowChart', 'Jumlah Mangsa');
             } catch (error) {
                 console.error('Ralat dalam memproses data Aliran Jumlah Mangsa:', error.message);
@@ -49,6 +50,7 @@ document.addEventListener('DOMContentLoaded', () => {
             console.log('Aliran Mangsa Masuk data:', data);
             try {
                 const jsonData = JSON.parse(data.contents);
+                console.log('Parsed Aliran Mangsa Masuk data:', jsonData);
                 displayFlowChart(jsonData, 'flowChartIn', 'Mangsa Masuk');
             } catch (error) {
                 console.error('Ralat dalam memproses data Aliran Mangsa Masuk:', error.message);
@@ -63,6 +65,7 @@ document.addEventListener('DOMContentLoaded', () => {
             console.log('Aliran Mangsa Keluar data:', data);
             try {
                 const jsonData = JSON.parse(data.contents);
+                console.log('Parsed Aliran Mangsa Keluar data:', jsonData);
                 displayFlowChart(jsonData, 'flowChartOut', 'Mangsa Keluar');
             } catch (error) {
                 console.error('Ralat dalam memproses data Aliran Mangsa Keluar:', error.message);
@@ -119,20 +122,30 @@ function loadMap() {
         attribution: '&copy; OpenStreetMap contributors',
     }).addTo(map);
 
-    const geojsonUrlSemenanjung = 'https://infobencanajkmv2.jkm.gov.my/assets/data/malaysia/arcgis_district_semenanjung.geojson';
-    const geojsonUrlBorneo = 'https://infobencanajkmv2.jkm.gov.my/assets/data/malaysia/arcgis_district_borneo.geojson';
+    const geojsonUrlSemenanjung = 'https://api.allorigins.win/get?url=' + encodeURIComponent('https://infobencanajkmv2.jkm.gov.my/assets/data/malaysia/arcgis_district_semenanjung.geojson');
+    const geojsonUrlBorneo = 'https://api.allorigins.win/get?url=' + encodeURIComponent('https://infobencanajkmv2.jkm.gov.my/assets/data/malaysia/arcgis_district_borneo.geojson');
 
     fetch(geojsonUrlSemenanjung)
         .then(response => response.json())
         .then(data => {
-            L.geoJSON(data).addTo(map);
+            try {
+                const jsonData = JSON.parse(data.contents);
+                L.geoJSON(jsonData).addTo(map);
+            } catch (error) {
+                console.error('Ralat dalam memproses geojson Semenanjung:', error.message);
+            }
         })
         .catch(error => console.error('Ralat memuatkan geojson Semenanjung:', error));
 
     fetch(geojsonUrlBorneo)
         .then(response => response.json())
         .then(data => {
-            L.geoJSON(data).addTo(map);
+            try {
+                const jsonData = JSON.parse(data.contents);
+                L.geoJSON(jsonData).addTo(map);
+            } catch (error) {
+                console.error('Ralat dalam memproses geojson Borneo:', error.message);
+            }
         })
         .catch(error => console.error('Ralat memuatkan geojson Borneo:', error));
 }
@@ -225,6 +238,8 @@ function displayFlowChart(data, chartId, label) {
     const ctx = document.getElementById(chartId).getContext('2d');
     let labels = [];
     let values = [];
+
+    console.log('Data for flow chart:', data);
 
     if (data && data.aliran && Array.isArray(data.aliran)) {
         data.aliran.forEach(item => {
