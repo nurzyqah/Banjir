@@ -15,6 +15,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 const jsonData = JSON.parse(data.contents);
                 displayData(jsonData);
                 displayPieChart(jsonData);
+                displayCategoryChart(jsonData);
             } catch (error) {
                 console.error('Ralat dalam memproses data:', error.message);
                 tableContainer.innerHTML = `<p style="color: red;">Gagal untuk memproses data: ${error.message}</p>`;
@@ -173,6 +174,47 @@ function displayPieChart(data) {
     new Chart(ctx, {
         type: 'pie',
         data: pieData,
+        options: {
+            plugins: {
+                legend: {
+                    position: 'bottom'
+                }
+            }
+        }
+    });
+}
+
+function displayCategoryChart(data) {
+    const ctx = document.getElementById('categoryChart').getContext('2d');
+
+    let categories = {};
+    if (data.ppsbuka && data.ppsbuka.length > 0) {
+        data.ppsbuka.forEach(item => {
+            if (item.kategori) {
+                if (!categories[item.kategori]) {
+                    categories[item.kategori] = 0;
+                }
+                categories[item.kategori] += parseInt(item.mangsa) || 0;
+            }
+        });
+    } else {
+        console.warn('Tiada data untuk carta kategori');
+        return;
+    }
+
+    const categoryData = {
+        labels: Object.keys(categories),
+        datasets: [{
+            label: 'Jumlah Mangsa',
+            data: Object.values(categories),
+            backgroundColor: ['#007bff', '#28a745', '#ffc107', '#dc3545'],
+            hoverOffset: 4
+        }]
+    };
+
+    new Chart(ctx, {
+        type: 'bar',
+        data: categoryData,
         options: {
             plugins: {
                 legend: {
