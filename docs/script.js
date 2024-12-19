@@ -241,10 +241,10 @@ function displayFlowChart(data, chartId, label) {
 
     console.log('Data for flow chart:', data);
 
-    if (data && data.aliran && Array.isArray(data.aliran)) {
-        data.aliran.forEach(item => {
-            labels.push(item.date); // Add the date
-            values.push(item.value); // Add the value (number of victims)
+    if (data && data.tarikh && data.mangsa) {
+        data.tarikh.forEach((date, index) => {
+            labels.push(date); // Add the date
+            values.push(data.mangsa[index]); // Add the value (number of victims)
         });
 
         const chartData = {
