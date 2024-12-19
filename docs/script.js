@@ -8,18 +8,14 @@ document.addEventListener('DOMContentLoaded', () => {
     const tableContainer = document.getElementById('table-container');
 
     fetch(apiUrl)
-        .then(response => response.text())
+        .then(response => response.json())
         .then(data => {
             console.log('Raw proxy data:', data);
             try {
-                const jsonData = JSON.parse(data);
-                if (jsonData && jsonData.contents) {
-                    const parsedData = JSON.parse(jsonData.contents);
-                    displayData(parsedData);
-                    displayPieChart(parsedData);
-                } else {
-                    throw new Error('Struktur JSON tidak sah: kandungan hilang');
-                }
+                const jsonData = JSON.parse(data.contents);
+                displayData(jsonData);
+                displayPieChart(jsonData);
+                displayCategoryChart(jsonData);
             } catch (error) {
                 console.error('Ralat dalam memproses data:', error.message);
                 tableContainer.innerHTML = `<p style="color: red;">Gagal untuk memproses data: ${error.message}</p>`;
@@ -34,16 +30,12 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Fetch and display the Aliran Jumlah Mangsa chart
     fetch(apiUrlAliranMangsa)
-        .then(response => response.text())
+        .then(response => response.json())
         .then(data => {
+            console.log('Aliran Jumlah Mangsa data:', data);
             try {
-                const jsonData = JSON.parse(data);
-                if (jsonData && jsonData.contents) {
-                    const parsedData = JSON.parse(jsonData.contents);
-                    displayFlowChart(parsedData, 'flowChart'); // Aliran Jumlah Mangsa
-                } else {
-                    throw new Error('Data tidak sah: kandungan hilang');
-                }
+                const jsonData = JSON.parse(data.contents);
+                displayFlowChart(jsonData, 'flowChart', 'Jumlah Mangsa');
             } catch (error) {
                 console.error('Ralat dalam memproses data Aliran Jumlah Mangsa:', error.message);
             }
@@ -52,16 +44,12 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Fetch and display the Aliran Mangsa Masuk chart
     fetch(apiUrlAliranMasuk)
-        .then(response => response.text())
+        .then(response => response.json())
         .then(data => {
+            console.log('Aliran Mangsa Masuk data:', data);
             try {
-                const jsonData = JSON.parse(data);
-                if (jsonData && jsonData.contents) {
-                    const parsedData = JSON.parse(jsonData.contents);
-                    displayFlowChart(parsedData, 'flowChartIn'); // Aliran Mangsa Masuk
-                } else {
-                    throw new Error('Data tidak sah: kandungan hilang');
-                }
+                const jsonData = JSON.parse(data.contents);
+                displayFlowChart(jsonData, 'flowChartIn', 'Mangsa Masuk');
             } catch (error) {
                 console.error('Ralat dalam memproses data Aliran Mangsa Masuk:', error.message);
             }
@@ -70,16 +58,12 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Fetch and display the Aliran Mangsa Keluar chart
     fetch(apiUrlAliranKeluar)
-        .then(response => response.text())
+        .then(response => response.json())
         .then(data => {
+            console.log('Aliran Mangsa Keluar data:', data);
             try {
-                const jsonData = JSON.parse(data);
-                if (jsonData && jsonData.contents) {
-                    const parsedData = JSON.parse(jsonData.contents);
-                    displayFlowChart(parsedData, 'flowChartOut'); // Aliran Mangsa Keluar
-                } else {
-                    throw new Error('Data tidak sah: kandungan hilang');
-                }
+                const jsonData = JSON.parse(data.contents);
+                displayFlowChart(jsonData, 'flowChartOut', 'Mangsa Keluar');
             } catch (error) {
                 console.error('Ralat dalam memproses data Aliran Mangsa Keluar:', error.message);
             }
@@ -203,13 +187,53 @@ function displayPieChart(data) {
     });
 }
 
+function displayCategoryChart(data) {
+    const ctx = document.getElementById('categoryChart').getContext('2d');
+
+    let categories = {};
+    if (data.ppsbuka && data.ppsbuka.length > 0) {
+        data.ppsbuka.forEach(item => {
+            if (item.kategori) {
+                if (!categories[item.kategori]) {
+                    categories[item.kategori] = 0;
+                }
+                categories[item.kategori] += parseInt(item.mangsa) || 0;
+            }
+        });
+    } else {
+        console.warn('Tiada data untuk carta kategori');
+        return;
+    }
+
+    const categoryData = {
+        labels: Object.keys(categories),
+        datasets: [{
+            label: 'Jumlah Mangsa',
+            data: Object.values(categories),
+            backgroundColor: ['#007bff', '#28a745', '#ffc107', '#dc3545'],
+            hoverOffset: 4
+        }]
+    };
+
+    new Chart(ctx, {
+        type: 'bar',
+        data: categoryData,
+        options: {
+            plugins: {
+                legend: {
+                    position: 'bottom'
+                }
+            }
+        }
+    });
+}
+
 // Function to display flow chart for Total Mangsa, Mangsa Masuk, and Mangsa Keluar
-function displayFlowChart(data, chartId) {
+function displayFlowChart(data, chartId, label) {
     const ctx = document.getElementById(chartId).getContext('2d');
     let labels = [];
     let values = [];
 
-    // Assuming the data has a structure like { dates: [], values: [] }
     if (data && data.aliran && Array.isArray(data.aliran)) {
         data.aliran.forEach(item => {
             labels.push(item.date); // Add the date
@@ -219,7 +243,7 @@ function displayFlowChart(data, chartId) {
         const chartData = {
             labels: labels,
             datasets: [{
-                label: 'Jumlah Mangsa',
+                label: label,
                 data: values,
                 borderColor: '#007bff',
                 backgroundColor: 'rgba(0, 123, 255, 0.2)',
@@ -227,7 +251,6 @@ function displayFlowChart(data, chartId) {
             }]
         };
 
-        // Create the chart
         new Chart(ctx, {
             type: 'line',
             data: chartData,
