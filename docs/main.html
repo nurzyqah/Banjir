@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="ms">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PAPAN PEMUKA BANJIR MALAYSIA</title>
+    <link rel="stylesheet" href="banjir.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+</head>
+<body>
+    <div class="container">
+        <h1>PAPAN PEMUKA BANJIR MALAYSIA</h1>
+
+        <!-- Carian Lokasi -->
+        <div class="card">
+            <div class="card-header">CARIAN LOKASI</div>
+            <div class="card-body">
+                <input type="text" id="searchInput" placeholder="Cari negeri atau daerah...">
+                <button onclick="filterTable()">Cari</button>
+            </div>
+        </div>
+
+        <!-- Gambaran Keseluruhan -->
+        <div class="card" id="table-container">
+            <div class="card-header">GAMBARAN KESELURUHAN</div>
+            <div class="card-body">
+                <p class="loading">Memuatkan data...</p>
+            </div>
+        </div>
+
+        <!-- Peta Banjir -->
+        <div class="card" id="map-container">
+            <div class="card-header">PETA BANJIR</div>
+            <div class="card-body">
+                <div id="map" style="height: 400px;"></div>
+            </div>
+        </div>
+
+        <!-- Carta Pai -->
+        <div class="card" id="pie-chart-container">
+            <div class="card-header">CARTA PAI JUMLAH MANGSA DAN KELUARGA</div>
+            <div class="card-body">
+                <canvas id="floodPieChart"></canvas>
+            </div>
+        </div>
+
+        <!-- Pecahan Kategori Mangsa -->
+        <div class="card" id="category-chart-container">
+            <div class="card-header">PECAHAN KATEGORI MANGSA</div>
+            <div class="card-body">
+                <canvas id="categoryChart"></canvas>
+            </div>
+        </div>
+
+        <!-- Carta Aliran Jumlah Mangsa -->
+        <div class="card" id="flow-chart-container">
+            <div class="card-header">CARTA ALIRAN JUMLAH MANGSA</div>
+            <div class="card-body">
+                <canvas id="flowChart"></canvas>
+            </div>
+        </div>
+
+        <!-- Carta Aliran Mangsa Masuk -->
+        <div class="card" id="flow-chart-in-container">
+            <div class="card-header">CARTA ALIRAN MANGSA MASUK</div>
+            <div class="card-body">
+                <canvas id="flowChartIn"></canvas>
+            </div>
+        </div>
+
+        <!-- Carta Aliran Mangsa Keluar -->
+        <div class="card" id="flow-chart-out-container">
+            <div class="card-header">CARTA ALIRAN MANGSA KELUAR</div>
+            <div class="card-body">
+                <canvas id="flowChartOut"></canvas>
+            </div>
+        </div>
+    </div>
+
+    <!-- Pautan ke D3.js dan script.js -->
+    <script src="https://d3js.org/d3.v7.min.js"></script>
+    <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+    <script src="script.js"></script>
+</body>
+</html>
