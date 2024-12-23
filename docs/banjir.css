@@ -5,7 +5,80 @@ body {
     margin: 0;
     padding: 0;
 }
+/* Global Styles */
+body {
+    font-family: 'Arial', sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: #f4f4f4; /* Soft background color */
+    color: #333; /* Dark text color for contrast */
+}
 
+header {
+    background-color: #007bff; /* Bright header color */
+    color: white;
+    padding: 20px;
+    text-align: center;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); /* Subtle shadow */
+}
+
+h1 {
+    margin: 0;
+    font-size: 2.5em; /* Larger font size for the title */
+}
+
+/* Main Content */
+main {
+    padding: 20px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+}
+
+.chart-container {
+    width: 80%; /* Responsive width */
+    max-width: 600px; /* Max width for larger screens */
+    margin: 20px 0;
+    padding: 20px;
+    background-color: white; /* White background for the chart */
+    border-radius: 8px; /* Rounded corners */
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1); /* Shadow for depth */
+}
+
+/* Footer Styles */
+footer {
+    text-align: center;
+    padding: 10px;
+    background-color: #333; /* Dark footer color */
+    color: white;
+    position: relative;
+    bottom: 0;
+    width: 100%;
+    margin-top: 20px; /* Space above footer */
+}
+
+/* Link Styles */
+a {
+    color: #007bff; /* Link color */
+    text-decoration: none; /* Remove underline */
+}
+
+a:hover {
+    text-decoration: underline; /* Underline on hover */
+}
+
+/* Responsive Styles */
+@media (max-width: 768px) {
+    h1 {
+        font-size: 2em; /* Adjust header size for smaller screens */
+    }
+
+    .chart-container {
+        width: 95%; /* Full width on smaller screens */
+        padding: 15px; /* Less padding */
+    }
+}
 .container {
     max-width: 1100px;
     margin: 30px auto;
