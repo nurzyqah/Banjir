@@ -9,54 +9,74 @@
     <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
 </head>
 <body>
-    <header>
-        <nav>
-            <div class="logo">PAPAN PEMUKA BANJIR MALAYSIA</div>
-            <div class="search">
+    <div class="container">
+        <h1>PAPAN PEMUKA BANJIR MALAYSIA</h1>
+
+        <!-- Carian Lokasi -->
+        <div class="card">
+            <div class="card-header">CARIAN LOKASI</div>
+            <div class="card-body">
                 <input type="text" id="searchInput" placeholder="Cari negeri atau daerah...">
                 <button onclick="filterTable()">Cari</button>
             </div>
-        </nav>
-    </header>
+        </div>
 
-    <main>
-        <section id="overview">
-            <h2>GAMBARAN KESELURUHAN</h2>
-            <div class="loading">Memuatkan data...</div>
-        </section>
+        <!-- Gambaran Keseluruhan -->
+        <div class="card" id="table-container">
+            <div class="card-header">GAMBARAN KESELURUHAN</div>
+            <div class="card-body">
+                <p class="loading">Memuatkan data...</p>
+            </div>
+        </div>
 
-        <section id="map-section">
-            <h2>PETA BANJIR</h2>
-            <div id="map" style="height: 400px;"></div>
-        </section>
+        <!-- Peta Banjir -->
+        <div class="card" id="map-container">
+            <div class="card-header">PETA BANJIR</div>
+            <div class="card-body">
+                <div id="map" style="height: 400px;"></div>
+            </div>
+        </div>
 
-        <section id="charts-section">
-            <div class="chart-card">
-                <h3>CARTA PAI JUMLAH MANGSA DAN KELUARGA</h3>
+        <!-- Carta Pai -->
+        <div class="card" id="pie-chart-container">
+            <div class="card-header">CARTA PAI JUMLAH MANGSA DAN KELUARGA</div>
+            <div class="card-body">
                 <canvas id="floodPieChart"></canvas>
             </div>
-            <div class="chart-card">
-                <h3>PECAHAN KATEGORI MANGSA</h3>
+        </div>
+
+        <!-- Pecahan Kategori Mangsa -->
+        <div class="card" id="category-chart-container">
+            <div class="card-header">PECAHAN KATEGORI MANGSA</div>
+            <div class="card-body">
                 <canvas id="categoryChart"></canvas>
             </div>
-            <div class="chart-card">
-                <h3>CARTA ALIRAN JUMLAH MANGSA</h3>
+        </div>
+
+        <!-- Carta Aliran Jumlah Mangsa -->
+        <div class="card" id="flow-chart-container">
+            <div class="card-header">CARTA ALIRAN JUMLAH MANGSA</div>
+            <div class="card-body">
                 <canvas id="flowChart"></canvas>
             </div>
-            <div class="chart-card">
-                <h3>CARTA ALIRAN MANGSA MASUK</h3>
+        </div>
+
+        <!-- Carta Aliran Mangsa Masuk -->
+        <div class="card" id="flow-chart-in-container">
+            <div class="card-header">CARTA ALIRAN MANGSA MASUK</div>
+            <div class="card-body">
                 <canvas id="flowChartIn"></canvas>
             </div>
-            <div class="chart-card">
-                <h3>CARTA ALIRAN MANGSA KELUAR</h3>
+        </div>
+
+        <!-- Carta Aliran Mangsa Keluar -->
+        <div class="card" id="flow-chart-out-container">
+            <div class="card-header">CARTA ALIRAN MANGSA KELUAR</div>
+            <div class="card-body">
                 <canvas id="flowChartOut"></canvas>
             </div>
-        </section>
-    </main>
-
-    <footer>
-        <p>&copy; 2024 PAPAN PEMUKA BANJIR MALAYSIA. Semua hak cipta dilindungi.</p>
-    </footer>
+        </div>
+    </div>
 
     <!-- Pautan ke D3.js dan script.js -->
     <script src="https://d3js.org/d3.v7.min.js"></script>
