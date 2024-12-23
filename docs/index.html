@@ -1,86 +1,92 @@
+<!-- index.html -->
+
 <!DOCTYPE html>
 <html lang="ms">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>PAPAN PEMUKA BANJIR MALAYSIA</title>
-    <link rel="stylesheet" href="banjir.css">
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Banjir Malaysia</title>
+  <link rel="stylesheet" href="banjir.css">
 </head>
 <body>
-    <div class="container">
-        <h1>PAPAN PEMUKA BANJIR MALAYSIA</h1>
-
-        <!-- Carian Lokasi -->
-        <div class="card">
-            <div class="card-header">CARIAN LOKASI</div>
-            <div class="card-body">
-                <input type="text" id="searchInput" placeholder="Cari negeri atau daerah...">
-                <button onclick="filterTable()">Cari</button>
-            </div>
-        </div>
-
-        <!-- Gambaran Keseluruhan -->
-        <div class="card" id="table-container">
-            <div class="card-header">GAMBARAN KESELURUHAN</div>
-            <div class="card-body">
-                <p class="loading">Memuatkan data...</p>
-            </div>
-        </div>
-
-        <!-- Peta Banjir -->
-        <div class="card" id="map-container">
-            <div class="card-header">PETA BANJIR</div>
-            <div class="card-body">
-                <div id="map" style="height: 400px;"></div>
-            </div>
-        </div>
-
-        <!-- Carta Pai -->
-        <div class="card" id="pie-chart-container">
-            <div class="card-header">CARTA PAI JUMLAH MANGSA DAN KELUARGA</div>
-            <div class="card-body">
-                <canvas id="floodPieChart"></canvas>
-            </div>
-        </div>
-
-        <!-- Pecahan Kategori Mangsa -->
-        <div class="card" id="category-chart-container">
-            <div class="card-header">PECAHAN KATEGORI MANGSA</div>
-            <div class="card-body">
-                <canvas id="categoryChart"></canvas>
-            </div>
-        </div>
-
-        <!-- Carta Aliran Jumlah Mangsa -->
-        <div class="card" id="flow-chart-container">
-            <div class="card-header">CARTA ALIRAN JUMLAH MANGSA</div>
-            <div class="card-body">
-                <canvas id="flowChart"></canvas>
-            </div>
-        </div>
-
-        <!-- Carta Aliran Mangsa Masuk -->
-        <div class="card" id="flow-chart-in-container">
-            <div class="card-header">CARTA ALIRAN MANGSA MASUK</div>
-            <div class="card-body">
-                <canvas id="flowChartIn"></canvas>
-            </div>
-        </div>
-
-        <!-- Carta Aliran Mangsa Keluar -->
-        <div class="card" id="flow-chart-out-container">
-            <div class="card-header">CARTA ALIRAN MANGSA KELUAR</div>
-            <div class="card-body">
-                <canvas id="flowChartOut"></canvas>
-            </div>
-        </div>
+  <header>
+    <div class="logo">
+      <img src="logo-jkmmv2.png" alt="Logo JKMMV2">
     </div>
-
-    <!-- Pautan ke D3.js dan script.js -->
-    <script src="https://d3js.org/d3.v7.min.js"></script>
-    <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
-    <script src="script.js"></script>
+    <nav>
+      <ul>
+        <li><a href="#">Home</a></li>
+        <li><a href="#">Data</a></li>
+        <li><a href="#">Grafik</a></li>
+        <li><a href="#">Tabel</a></li>
+        <li><a href="#">Laporan</a></li>
+      </ul>
+    </nav>
+  </header>
+  <main>
+    <section class="hero">
+      <div class="background-image">
+        <img src="banjir-malaysia.jpg" alt="Banjir Malaysia">
+      </div>
+      <div class="title">
+        <h1>Banjir Malaysia: Data dan Informasi</h1>
+        <p>Mengumpulkan data dan informasi tentang banjir di Malaysia</p>
+      </div>
+    </section>
+    <section class="data">
+      <h2>Data Banjir</h2>
+      <div class="container">
+        <table>
+          <thead>
+            <tr>
+              <th>Negeri</th>
+              <th>Daerah</th>
+              <th>Jumlah Mangsa</th>
+              <th>Jumlah Keluarga</th>
+              <th>Kapasiti</th>
+            </tr>
+          </thead>
+          <tbody>
+            <!-- data di sini -->
+          </tbody>
+        </table>
+      </div>
+      <div class="grafik">
+        <canvas id="grafik-banjir"></canvas>
+      </div>
+    </section>
+    <section class="grafik">
+      <h2>Grafik Banjir</h2>
+      <div class="grafik-garis">
+        <canvas id="grafik-garis-banjir"></canvas>
+      </div>
+      <div class="grafik-pie">
+        <canvas id="grafik-pie-banjir"></canvas>
+      </div>
+    </section>
+    <section class="tabel">
+      <h2>Tabel Data Banjir</h2>
+      <div class="container">
+        <table>
+          <thead>
+            <tr>
+              <th>Negeri</th>
+              <th>Daerah</th>
+              <th>Jumlah Mangsa</th>
+              <th>Jumlah Keluarga</th>
+              <th>Kapasiti</th>
+            </tr>
+          </thead>
+          <tbody>
+            <!-- data di sini -->
+          </tbody>
+        </table>
+      </div>
+    </section>
+  </main>
+  <footer>
+    <p>&copy; 2023 JKMMV2</p>
+  </footer>
+  <script src="script.js"></script>
 </body>
 </html>
