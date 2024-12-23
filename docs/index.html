@@ -1,92 +1,66 @@
-<!-- index.html -->
-
 <!DOCTYPE html>
 <html lang="ms">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Banjir Malaysia</title>
-  <link rel="stylesheet" href="banjir.css">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PAPAN PEMUKA BANJIR MALAYSIA</title>
+    <link rel="stylesheet" href="banjir.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
 </head>
 <body>
-  <header>
-    <div class="logo">
-      <img src="logo-jkmmv2.png" alt="Logo JKMMV2">
-    </div>
-    <nav>
-      <ul>
-        <li><a href="#">Home</a></li>
-        <li><a href="#">Data</a></li>
-        <li><a href="#">Grafik</a></li>
-        <li><a href="#">Tabel</a></li>
-        <li><a href="#">Laporan</a></li>
-      </ul>
-    </nav>
-  </header>
-  <main>
-    <section class="hero">
-      <div class="background-image">
-        <img src="banjir-malaysia.jpg" alt="Banjir Malaysia">
-      </div>
-      <div class="title">
-        <h1>Banjir Malaysia: Data dan Informasi</h1>
-        <p>Mengumpulkan data dan informasi tentang banjir di Malaysia</p>
-      </div>
-    </section>
-    <section class="data">
-      <h2>Data Banjir</h2>
-      <div class="container">
-        <table>
-          <thead>
-            <tr>
-              <th>Negeri</th>
-              <th>Daerah</th>
-              <th>Jumlah Mangsa</th>
-              <th>Jumlah Keluarga</th>
-              <th>Kapasiti</th>
-            </tr>
-          </thead>
-          <tbody>
-            <!-- data di sini -->
-          </tbody>
-        </table>
-      </div>
-      <div class="grafik">
-        <canvas id="grafik-banjir"></canvas>
-      </div>
-    </section>
-    <section class="grafik">
-      <h2>Grafik Banjir</h2>
-      <div class="grafik-garis">
-        <canvas id="grafik-garis-banjir"></canvas>
-      </div>
-      <div class="grafik-pie">
-        <canvas id="grafik-pie-banjir"></canvas>
-      </div>
-    </section>
-    <section class="tabel">
-      <h2>Tabel Data Banjir</h2>
-      <div class="container">
-        <table>
-          <thead>
-            <tr>
-              <th>Negeri</th>
-              <th>Daerah</th>
-              <th>Jumlah Mangsa</th>
-              <th>Jumlah Keluarga</th>
-              <th>Kapasiti</th>
-            </tr>
-          </thead>
-          <tbody>
-            <!-- data di sini -->
-          </tbody>
-        </table>
-      </div>
-    </section>
-  </main>
-  <footer>
-    <p>&copy; 2023 JKMMV2</p>
-  </footer>
-  <script src="script.js"></script>
+    <header>
+        <nav>
+            <div class="logo">PAPAN PEMUKA BANJIR MALAYSIA</div>
+            <div class="search">
+                <input type="text" id="searchInput" placeholder="Cari negeri atau daerah...">
+                <button onclick="filterTable()">Cari</button>
+            </div>
+        </nav>
+    </header>
+
+    <main>
+        <section id="overview">
+            <h2>GAMBARAN KESELURUHAN</h2>
+            <div class="loading">Memuatkan data...</div>
+        </section>
+
+        <section id="map-section">
+            <h2>PETA BANJIR</h2>
+            <div id="map" style="height: 400px;"></div>
+        </section>
+
+        <section id="charts-section">
+            <div class="chart-card">
+                <h3>CARTA PAI JUMLAH MANGSA DAN KELUARGA</h3>
+                <canvas id="floodPieChart"></canvas>
+            </div>
+            <div class="chart-card">
+                <h3>PECAHAN KATEGORI MANGSA</h3>
+                <canvas id="categoryChart"></canvas>
+            </div>
+            <div class="chart-card">
+                <h3>CARTA ALIRAN JUMLAH MANGSA</h3>
+                <canvas id="flowChart"></canvas>
+            </div>
+            <div class="chart-card">
+                <h3>CARTA ALIRAN MANGSA MASUK</h3>
+                <canvas id="flowChartIn"></canvas>
+            </div>
+            <div class="chart-card">
+                <h3>CARTA ALIRAN MANGSA KELUAR</h3>
+                <canvas id="flowChartOut"></canvas>
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        <p>&copy; 2024 PAPAN PEMUKA BANJIR MALAYSIA. Semua hak cipta dilindungi.</p>
+    </footer>
+
+    <!-- Pautan ke D3.js dan script.js -->
+    <script src="https://d3js.org/d3.v7.min.js"></script>
+    <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+    <script src="script.js"></script>
 </body>
 </html>
