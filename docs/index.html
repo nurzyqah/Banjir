@@ -10,6 +10,17 @@
 </head>
 <body>
     <div class="container">
+        <header>
+            <nav>
+                <ul>
+                    <li><a href="#home">Home</a></li>
+                    <li><a href="#overview">Gambaran Keseluruhan</a></li>
+                    <li><a href="#map">Peta Banjir</a></li>
+                    <li><a href="#charts">Carta</a></li>
+                </ul>
+            </nav>
+        </header>
+        
         <h1>PAPAN PEMUKA BANJIR MALAYSIA</h1>
 
         <!-- Carian Lokasi -->
@@ -39,25 +50,9 @@
 
         <!-- Carta Pai -->
         <div class="card" id="pie-chart-container">
-            <div class="card-header">CARTA PAI JUMLAH MANGSA DAN KELUARGA</div>
+            <div class="card-header">CARTA PAI</div>
             <div class="card-body">
-                <canvas id="floodPieChart"></canvas>
-            </div>
-        </div>
-
-        <!-- Pecahan Kategori Mangsa -->
-        <div class="card" id="category-chart-container">
-            <div class="card-header">PECAHAN KATEGORI MANGSA</div>
-            <div class="card-body">
-                <canvas id="categoryChart"></canvas>
-            </div>
-        </div>
-
-        <!-- Carta Aliran Jumlah Mangsa -->
-        <div class="card" id="flow-chart-container">
-            <div class="card-header">CARTA ALIRAN JUMLAH MANGSA</div>
-            <div class="card-body">
-                <canvas id="flowChart"></canvas>
+                <canvas id="pieChart"></canvas>
             </div>
         </div>
 
@@ -76,11 +71,10 @@
                 <canvas id="flowChartOut"></canvas>
             </div>
         </div>
-    </div>
 
-    <!-- Pautan ke D3.js dan script.js -->
-    <script src="https://d3js.org/d3.v7.min.js"></script>
-    <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
-    <script src="script.js"></script>
+        <footer>
+            <p>&copy; 2024 Your Company</p>
+        </footer>
+    </div>
 </body>
 </html>
