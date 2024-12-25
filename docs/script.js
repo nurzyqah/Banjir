@@ -8,23 +8,19 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Fetching data for the main table
     fetch(apiUrl)
-        .then(response => response.json())
-        .then(data => {
-            console.log('Raw proxy data:', data);
-            try {
-                const jsonData = JSON.parse(data.contents);
-                displayData(jsonData);
-                displayPieChart(jsonData);
-                displayCategoryChart(jsonData);
-            } catch (error) {
-                console.error('Ralat dalam memproses data:', error.message);
-                tableContainer.innerHTML = `<p style="color: red;">Gagal untuk memproses data: ${error.message}</p>`;
-            }
-        })
-        .catch(error => {
-            console.error('Ralat memuatkan data:', error.message);
-            tableContainer.innerHTML = `<p style="color: red;">Gagal untuk memuatkan data: ${error.message}</p>`;
-        });
+    .then(response => {
+        if (!response.ok) {
+            console.error('HTTP error:', response.status, response.statusText);
+            return Promise.reject('Failed to fetch data');
+        }
+        return response.json();
+    })
+    .then(data => {
+        // Process your data
+    })
+    .catch(error => {
+        console.error('There has been a problem with your fetch operation:', error);
+    });
 
     // Load map with GeoJSON data
     loadMap();
