@@ -1,7 +1,7 @@
-const apiUrl = 'https://api.allorigins.win/get?url=' + encodeURIComponent('https://infobencanajkmv2.jkm.gov.my/api/data-dashboard-table-pps.php?a=0&b=0&seasonmain_id=baru&seasonnegeri_id=');
-const apiUrlAliranMangsa = 'https://api.allorigins.win/get?url=' + encodeURIComponent('https://infobencanajkmv2.jkm.gov.my/api/data-dashboard-aliran-trend.php?a=0&b=0&seasonmain_id=208&seasonnegeri_id=');
-const apiUrlAliranMasuk = 'https://api.allorigins.win/get?url=' + encodeURIComponent('https://infobencanajkmv2.jkm.gov.my/api/data-dashboard-aliran-trend-masuk.php?a=0&b=0&seasonmain_id=208&seasonnegeri_id=');
-const apiUrlAliranKeluar = 'https://api.allorigins.win/get?url=' + encodeURIComponent('https://infobencanajkmv2.jkm.gov.my/api/data-dashboard-aliran-trend-balik.php?a=0&b=0&seasonmain_id=208&seasonnegeri_id=');
+const apiUrl = 'https://api.allorigins.win/get?url=' + encodeURIComponent('https://newapi.example.com/flood/victims');
+const apiUrlAliranMangsa = 'https://api.allorigins.win/get?url=' + encodeURIComponent('https://newapi.example.com/flood/flow-trend');
+const apiUrlAliranMasuk = 'https://api.allorigins.win/get?url=' + encodeURIComponent('https://newapi.example.com/flood/flow-in');
+const apiUrlAliranKeluar = 'https://api.allorigins.win/get?url=' + encodeURIComponent('https://newapi.example.com/flood/flow-out');
 
 document.addEventListener('DOMContentLoaded', () => {
     const tableContainer = document.getElementById('table-container');
@@ -71,6 +71,7 @@ document.addEventListener('DOMContentLoaded', () => {
         })
         .catch(error => console.error('Ralat memuatkan data Aliran Mangsa Keluar:', error.message));
 });
+
 
 function displayData(data) {
     const tableContainer = document.getElementById('table-container');
