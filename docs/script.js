@@ -6,10 +6,23 @@ const map = new mapboxgl.Map({
   zoom: 5
 });
 
-Promise.all([
-  d3.json('https://infobencanajkmv2.jkm.gov.my/assets/data/malaysia/arcgis_district_semenanjung.geojson'),
-  d3.json('https://infobencanajkmv2.jkm.gov.my/assets/data/malaysia/arcgis_district_borneo.geojson')
-])
+// CORS proxy URL
+const proxyUrl = 'https://cors-anywhere.herokuapp.com/';
+
+// URLs for GeoJSON and data
+const geoJsonUrls = [
+  'https://infobencanajkmv2.jkm.gov.my/assets/data/malaysia/arcgis_district_semenanjung.geojson',
+  'https://infobencanajkmv2.jkm.gov.my/assets/data/malaysia/arcgis_district_borneo.geojson'
+];
+
+const floodDataUrl = 'https://infobencanajkmv2.jkm.gov.my/api/data-dashboard-table-pps.php?a=0&b=0&seasonmain_id=208&seasonnegeri_id=';
+
+// Fetch GeoJSON Data through the CORS proxy
+Promise.all(geoJsonUrls.map(url => 
+  fetch(proxyUrl + url)
+    .then(response => response.json())
+    .catch(error => console.error('Error fetching GeoJSON:', error))
+))
   .then(([semenanjungData, borneoData]) => {
     map.on('load', () => {
       map.addSource('semenanjung', {
@@ -42,18 +55,16 @@ Promise.all([
       });
     });
   })
-  .catch(error => {
-    console.log('Error loading map data:', error);
-  });
+  .catch(error => console.error('Error in loading map data:', error));
 
 // Fetch flood data
-d3.json('https://infobencanajkmv2.jkm.gov.my/api/data-dashboard-table-pps.php?a=0&b=0&seasonmain_id=208&seasonnegeri_id=')
+fetch(proxyUrl + floodDataUrl)
+  .then(response => response.json())
   .then(data => {
-    console.log(data);
     createTable(data);
   })
   .catch(error => {
-    console.log('Error fetching data:', error);
+    console.log('Error fetching flood data:', error);
   });
 
 function createTable(data) {
