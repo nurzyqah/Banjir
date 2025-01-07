@@ -94,47 +94,6 @@ document.addEventListener('DOMContentLoaded', () => {
         .catch(error => console.error('Ralat memuatkan data Aliran Mangsa Keluar:', error.message));
 });
 
-function displayData(data) {
-    const tableContainer = document.getElementById('table-container');
-    console.log('Memaparkan data:', data);
-
-    if (!data.ppsbuka || data.ppsbuka.length === 0) {
-        tableContainer.innerHTML = '<p>Tiada data yang tersedia.</p>';
-        return;
-    }
-
-    let tableHTML = `
-        <table>
-            <thead>
-                <tr>
-                    <th>Nama PPS</th>
-                    <th>Negeri</th>
-                    <th>Daerah</th>
-                    <th>Mangsa</th>
-                    <th>Keluarga</th>
-                    <th>Kapasiti</th>
-                </tr>
-            </thead>
-            <tbody>
-    `;
-
-    data.ppsbuka.forEach(item => {
-        tableHTML += `
-            <tr>
-                <td>${item.nama}</td>
-                <td>${item.negeri}</td>
-                <td>${item.daerah}</td>
-                <td>${item.mangsa}</td>
-                <td>${item.keluarga}</td>
-                <td>${item.kapasiti}</td>
-            </tr>
-        `;
-    });
-
-    tableHTML += `</tbody></table>`;
-    tableContainer.innerHTML = tableHTML;
-}
-
 function loadMap() {
     const map = L.map('map').setView([4.2105, 101.9758], 6);
 
@@ -146,15 +105,10 @@ function loadMap() {
     const geojsonUrlBorneo = 'https://api.allorigins.win/get?url=' + encodeURIComponent('https://infobencanajkmv2.jkm.gov.my/assets/data/malaysia/arcgis_district_borneo.geojson');
 
     fetch(geojsonUrlSemenanjung)
-        .then(response => {
-            if (!response.ok) {
-                throw new Error(`HTTP error! status: ${response.status}`);
-            }
-            return response.json();
-        })
-        .then(data => {
+        .then(response => response.text())
+        .then(text => {
             try {
-                const jsonData = JSON.parse(data.contents);
+                const jsonData = JSON.parse(text);
                 L.geoJSON(jsonData).addTo(map);
             } catch (error) {
                 console.error('Ralat dalam memproses geojson Semenanjung:', error.message);
@@ -163,174 +117,14 @@ function loadMap() {
         .catch(error => console.error('Ralat memuatkan geojson Semenanjung:', error));
 
     fetch(geojsonUrlBorneo)
-        .then(response => {
-            if (!response.ok) {
-                throw new Error(`HTTP error! status: ${response.status}`);
-            }
-            return response.json();
-        })
-        .then(data => {
+        .then(response => response.text())
+        .then(text => {
             try {
-                const jsonData = JSON.parse(data.contents);
+                const jsonData = JSON.parse(text);
                 L.geoJSON(jsonData).addTo(map);
             } catch (error) {
                 console.error('Ralat dalam memproses geojson Borneo:', error.message);
             }
         })
         .catch(error => console.error('Ralat memuatkan geojson Borneo:', error));
-}
-
-function displayPieChart(data) {
-    const ctx = document.getElementById('floodPieChart').getContext('2d');
-
-    let totalVictims = 0;
-    let totalFamilies = 0;
-
-    // Calculate totals
-    if (data.ppsbuka && data.ppsbuka.length > 0) {
-        data.ppsbuka.forEach(item => {
-            totalVictims += parseInt(item.mangsa) || 0;
-            totalFamilies += parseInt(item.keluarga) || 0;
-        });
-    } else {
-        console.warn('Tiada data untuk carta pai');
-        return;
-    }
-
-    // Chart data
-    const pieData = {
-        labels: ['Jumlah Mangsa', 'Jumlah Keluarga'],
-        datasets: [{
-            label: 'Bilangan',
-            data: [totalVictims, totalFamilies],
-            backgroundColor: ['#007bff', '#28a745'],
-            hoverOffset: 4
-        }]
-    };
-
-    // Create chart
-    new Chart(ctx, {
-        type: 'pie',
-        data: pieData,
-        options: {
-            plugins: {
-                legend: {
-                    position: 'bottom'
-                }
-            }
-        }
-    });
-}
-
-function displayCategoryChart(data) {
-    const ctx = document.getElementById('pieChart').getContext('2d');
-
-    let categories = {};
-    if (data.ppsbuka && data.ppsbuka.length > 0) {
-        data.ppsbuka.forEach(item => {
-            if (item.kategori) {
-                if (!categories[item.kategori]) {
-                    categories[item.kategori] = 0;
-                }
-                categories[item.kategori] += parseInt(item.mangsa) || 0;
-            }
-        });
-    } else {
-        console.warn('Tiada data untuk carta kategori');
-        return;
-    }
-
-    const categoryData = {
-        labels: Object.keys(categories),
-        datasets: [{
-            label: 'Jumlah Mangsa',
-            data: Object.values(categories),
-            backgroundColor: ['#007bff', '#28a745', '#ffc107', '#dc3545'],
-            hoverOffset: 4
-        }]
-    };
-
-    new Chart(ctx, {
-        type: 'bar',
-        data: categoryData,
-        options: {
-            plugins: {
-                legend: {
-                    position: 'bottom'
-                }
-            }
-        }
-    });
-}
-
-// Function to display flow chart for Total Mangsa, Mangsa Masuk, and Mangsa Keluar
-function displayFlowChart(data, chartId, label, key) {
-    const ctx = document.getElementById(chartId).getContext('2d');
-    let labels = [];
-    let values = [];
-
-    console.log('Data for flow chart:', data);
-
-    if (data && data.tarikh && data[key]) {
-        data.tarikh.forEach((date, index) => {
-            labels.push(date); // Add the date
-            values.push(data[key][index]); // Add the value (number of victims)
-        });
-
-        const chartData = {
-            labels: labels,
-            datasets: [{
-                label: label,
-                data: values,
-                borderColor: '#007bff',
-                backgroundColor: 'rgba(0, 123, 255, 0.2)',
-                fill: true
-            }]
-        };
-
-        new Chart(ctx, {
-            type: 'line',
-            data: chartData,
-            options: {
-                responsive: true,
-                plugins: {
-                    legend: {
-                        position: 'top',
-                    },
-                    tooltip: {
-                        callbacks: {
-                            label: function(tooltipItem) {
-                                return tooltipItem.label + ': ' + tooltipItem.raw + ' mangsa';
-                            }
-                        }
-                    }
-                }
-            }
-        });
-    } else {
-        console.warn('Data tidak sesuai untuk carta aliran');
-    }
-}
-
-function filterTable() {
-    const searchInput = document.getElementById('searchInput').value.trim().toLowerCase();
-    const tableRows = document.querySelectorAll('#table-container table tbody tr');
-
-    if (!searchInput) {
-        alert("Sila masukkan negeri atau daerah untuk carian.");
-        return;
-    }
-
-    tableRows.forEach(row => {
-        const columns = row.querySelectorAll('td');
-        const name = columns[0].textContent.trim().toLowerCase();
-        const state = columns[1].textContent.trim().toLowerCase();
-        const district = columns[2].textContent.trim().toLowerCase();
-
-        if (name.includes(searchInput) || state.includes(searchInput) || district.includes(searchInput)) {
-            row.style.display = '';
-        } else {
-            row.style.display = 'none';
-        }
-    });
 }
