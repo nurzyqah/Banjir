@@ -1,191 +1,28 @@
 <!DOCTYPE html>
-<html lang="ms">
+<html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>PAPAN PEMUKA BANJIR MALAYSIA</title>
-    <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
-    <style>
-        /* General Styles */
-        body {
-            font-family: Arial, sans-serif;
-            margin: 0;
-            padding: 0;
-            background-color: #f4f4f9;
-            color: #333;
-        }
-        h1 {
-            text-align: center;
-            color: #0056b3;
-            margin: 20px 0;
-        }
-        .container {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 20px;
-        }
-        /* Navigation Bar */
-        header {
-            background-color: #0056b3;
-            padding: 10px 0;
-            margin-bottom: 20px;
-        }
-        nav ul {
-            list-style: none;
-            display: flex;
-            justify-content: center;
-            padding: 0;
-            margin: 0;
-        }
-        nav ul li {
-            margin: 0 15px;
-        }
-        nav ul li a {
-            color: white;
-            text-decoration: none;
-            font-weight: bold;
-        }
-        nav ul li a:hover {
-            text-decoration: underline;
-        }
-        /* Card Styles */
-        .card {
-            background: white;
-            border-radius: 8px;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-            margin-bottom: 20px;
-            overflow: hidden;
-        }
-        .card-header {
-            background-color: #0056b3;
-            color: white;
-            padding: 10px;
-            font-size: 16px;
-            font-weight: bold;
-        }
-        .card-body {
-            padding: 20px;
-        }
-        /* Search Box */
-        #searchInput {
-            width: calc(100% - 100px);
-            padding: 10px;
-            font-size: 14px;
-            margin-right: 10px;
-            border: 1px solid #ddd;
-            border-radius: 4px;
-        }
-        button {
-            padding: 10px 20px;
-            font-size: 14px;
-            background-color: #0056b3;
-            color: white;
-            border: none;
-            border-radius: 4px;
-            cursor: pointer;
-        }
-        button:hover {
-            background-color: #004494;
-        }
-        /* Map Styles */
-        #map {
-            height: 400px;
-            width: 100%;
-        }
-        /* Chart Styles */
-        canvas {
-            max-width: 100%;
-        }
-        /* Footer */
-        footer {
-            text-align: center;
-            padding: 10px 0;
-            margin-top: 20px;
-            background-color: #0056b3;
-            color: white;
-        }
-    </style>
-    <script src="https://cdn.jsdelivr.net/npm/script.js"></script>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Malaysia Flood Dashboard</title>
+  <link rel="stylesheet" href="banjir.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/mapbox-gl/2.8.1/mapbox-gl.js"></script>
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/mapbox-gl/2.8.1/mapbox-gl.css" rel="stylesheet" />
 </head>
 <body>
-    <div class="container">
-        <header>
-            <nav>
-                <ul>
-                    <li><a href="#home">Home</a></li>
-                    <li><a href="#overview">Gambaran Keseluruhan</a></li>
-                    <li><a href="#map">Peta Banjir</a></li>
-                    <li><a href="#charts">Carta</a></li>
-                </ul>
-            </nav>
-        </header>
+  <header>
+    <h1>Malaysia Flood Dashboard</h1>
+    <p>Real-time Flood Information and Map Visualization</p>
+  </header>
 
-        <h1>PAPAN PEMUKA BANJIR MALAYSIA</h1>
-
-        <!-- Carian Lokasi -->
-        <div class="card">
-            <div class="card-header">CARIAN LOKASI</div>
-            <div class="card-body">
-                <input type="text" id="searchInput" placeholder="Cari negeri atau daerah...">
-                <button onclick="filterTable()">Cari</button>
-            </div>
-        </div>
-
-        <!-- Gambaran Keseluruhan -->
-        <div class="card" id="table-container">
-            <div class="card-header">GAMBARAN KESELURUHAN</div>
-            <div class="card-body">
-                <p class="loading">Memuatkan data...</p>
-            </div>
-        </div>
-
-        <!-- Peta Banjir -->
-        <div class="card" id="map-container">
-            <div class="card-header">PETA BANJIR</div>
-            <div class="card-body">
-                <div id="map"></div>
-            </div>
-        </div>
-
-        <!-- Carta Pai -->
-        <div class="card" id="pie-chart-container">
-            <div class="card-header">CARTA PAI</div>
-            <div class="card-body">
-                <canvas id="pieChart"></canvas>
-            </div>
-        </div>
-
-        <!-- Carta Aliran Mangsa Masuk -->
-        <div class="card" id="flow-chart-in-container">
-            <div class="card-header">CARTA ALIRAN MANGSA MASUK</div>
-            <div class="card-body">
-                <canvas id="flowChartIn"></canvas>
-            </div>
-        </div>
-
-        <!-- Carta Aliran Mangsa Keluar -->
-        <div class="card" id="flow-chart-out-container">
-            <div class="card-header">CARTA ALIRAN MANGSA KELUAR</div>
-            <div class="card-body">
-                <canvas id="flowChartOut"></canvas>
-            </div>
-        </div>
-
-        <div class="card" id="category-chart-container">
-            <div class="card-header">CARTA KATEGORI</div>
-            <div class="card-body">
-                <canvas id="categoryChart"></canvas>
-            </div>
-        </div>
-        
-
-        <footer>
-            <p>&copy; 2024 Your Company</p>
-        </footer>
-        <!-- Pautan ke D3.js dan script.js -->
-        <script src="https://d3js.org/d3.v7.min.js"></script>
-        <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
-        <script src="script.js"></script>
+  <div id="dashboard">
+    <div id="map"></div>
+    <div id="data-table">
+      <h2>Flood Data</h2>
+      <div id="table-container"></div>
     </div>
+  </div>
+
+  <script src="https://d3js.org/d3.v6.min.js"></script>
+  <script src="script.js"></script>
 </body>
 </html>

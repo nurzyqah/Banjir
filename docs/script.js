@@ -1,61 +1,78 @@
-// Helper function to handle errors
-function handleError(error, context) {
-    console.error(`Error in ${context}:`, error);
-    alert(`Something went wrong in ${context}. Check the console for details.`);
-}
+mapboxgl.accessToken = 'your-access-token-here'; // Replace with your Mapbox access token
+const map = new mapboxgl.Map({
+  container: 'map',
+  style: 'mapbox://styles/mapbox/streets-v11',
+  center: [101.9758, 4.2105], // Coordinates for Malaysia
+  zoom: 5
+});
 
-// Function to fetch GeoJSON data
-function fetchGeoJSON(url) {
-    return fetch(url)
-        .then(response => {
-            if (!response.ok) {
-                throw new Error(`Failed to fetch from ${url}`);
-            }
-            return response.json();
-        })
-        .catch(error => handleError(error, 'fetchGeoJSON'));
-}
+Promise.all([
+  d3.json('https://infobencanajkmv2.jkm.gov.my/assets/data/malaysia/arcgis_district_semenanjung.geojson'),
+  d3.json('https://infobencanajkmv2.jkm.gov.my/assets/data/malaysia/arcgis_district_borneo.geojson')
+])
+  .then(([semenanjungData, borneoData]) => {
+    map.on('load', () => {
+      map.addSource('semenanjung', {
+        type: 'geojson',
+        data: semenanjungData
+      });
+      map.addSource('borneo', {
+        type: 'geojson',
+        data: borneoData
+      });
 
-// Function to render the chart
-function renderChart(data) {
-    if (!data) {
-        handleError('Data is null or undefined', 'renderChart');
-        return;
-    }
-
-    // Example: Rendering the Pie Chart
-    const ctx = document.getElementById('pieChart').getContext('2d');
-    const pieChart = new Chart(ctx, {
-        type: 'pie',
-        data: {
-            labels: ['Flooding', 'Non-Flooding'],
-            datasets: [{
-                data: [65, 35],
-                backgroundColor: ['#ff0000', '#00ff00'],
-                borderColor: ['#ff0000', '#00ff00'],
-                borderWidth: 1
-            }]
+      map.addLayer({
+        id: 'semenanjung-layer',
+        type: 'fill',
+        source: 'semenanjung',
+        paint: {
+          'fill-color': '#088',
+          'fill-opacity': 0.5
         }
+      });
+
+      map.addLayer({
+        id: 'borneo-layer',
+        type: 'fill',
+        source: 'borneo',
+        paint: {
+          'fill-color': '#008',
+          'fill-opacity': 0.5
+        }
+      });
     });
+  })
+  .catch(error => {
+    console.log('Error loading map data:', error);
+  });
+
+// Fetch flood data
+d3.json('https://infobencanajkmv2.jkm.gov.my/api/data-dashboard-table-pps.php?a=0&b=0&seasonmain_id=208&seasonnegeri_id=')
+  .then(data => {
+    console.log(data);
+    createTable(data);
+  })
+  .catch(error => {
+    console.log('Error fetching data:', error);
+  });
+
+function createTable(data) {
+  const tableContainer = d3.select("#table-container");
+  const table = tableContainer.append("table");
+  const header = table.append("thead").append("tr");
+  const body = table.append("tbody");
+
+  // Assume the data is an array of objects
+  const columns = Object.keys(data[0]);
+
+  columns.forEach(col => {
+    header.append("th").text(col);
+  });
+
+  data.forEach(row => {
+    const tr = body.append("tr");
+    columns.forEach(col => {
+      tr.append("td").text(row[col]);
+    });
+  });
 }
-
-// Function to load data
-function loadData() {
-    const geoJSONUrls = [
-        'https://infobencanajkmv2.jkm.gov.my/assets/data/malaysia/arcgis_district_semenanjung.geojson',
-        'https://infobencanajkmv2.jkm.gov.my/assets/data/malaysia/arcgis_district_borneo.geojson'
-    ];
-
-    Promise.all(geoJSONUrls.map(url => fetchGeoJSON(url)))
-        .then(data => {
-            if (data && data[0] && data[1]) {
-                renderChart(data);
-            } else {
-                handleError('GeoJSON data is incomplete', 'loadData');
-            }
-        })
-        .catch(error => handleError(error, 'loadData'));
-}
-
-// Initialize data loading
-loadData();
