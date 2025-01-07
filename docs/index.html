@@ -110,15 +110,22 @@
         };
 
         const loadDashboardData = async () => {
-            const apiURL = "https://infobencanajkmv2.jkm.gov.my/api/data-dashboard-table-pps.php?a=0&b=0&seasonmain_id=208&seasonnegeri_id=";
+            const apiURLs = [
+                "https://infobencanajkmv2.jkm.gov.my/api/data-dashboard-aliran-trend.php?a=0&b=0&seasonmain_id=209&seasonnegeri_id=",
+                "https://infobencanajkmv2.jkm.gov.my/api/data-dashboard-aliran-trend-masuk.php?a=0&b=0&seasonmain_id=209&seasonnegeri_id=",
+                "https://infobencanajkmv2.jkm.gov.my/api/data-dashboard-aliran-trend-balik.php?a=0&b=0&seasonmain_id=209&seasonnegeri_id=",
+                "https://infobencanajkmv2.jkm.gov.my/api/data-dashboard-table-pps.php?a=0&b=0&seasonmain_id=209&seasonnegeri_id=",
+                "https://infobencanajkmv2.jkm.gov.my/api/pusat-buka.php?a=0&b=0",
+                "https://infobencanajkmv2.jkm.gov.my/api/data-dashboard-pie.php?a=0&b=0&seasonmain_id=209&seasonnegeri_id=",
+            ];
 
             try {
-                const response = await fetch(apiURL);
-                const data = await response.json();
+                const responses = await Promise.all(apiURLs.map(url => fetch(url).then(res => res.json())));
+                const [trendData, trendMasuk, trendBalik, tableData] = responses;
 
-                const totalPPS = data.reduce((acc, curr) => acc + Number(curr.total_pps || 0), 0);
-                const totalVictims = data.reduce((acc, curr) => acc + Number(curr.total_victims || 0), 0);
-                const totalFamilies = data.reduce((acc, curr) => acc + Number(curr.total_families || 0), 0);
+                const totalPPS = tableData.reduce((acc, curr) => acc + Number(curr.total_pps || 0), 0);
+                const totalVictims = tableData.reduce((acc, curr) => acc + Number(curr.total_victims || 0), 0);
+                const totalFamilies = tableData.reduce((acc, curr) => acc + Number(curr.total_families || 0), 0);
 
                 document.getElementById("total-pps").textContent = totalPPS;
                 document.getElementById("total-victims").textContent = totalVictims;
