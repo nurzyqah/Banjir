@@ -1,28 +1,134 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Malaysia Flood Dashboard</title>
-  <link rel="stylesheet" href="banjir.css">
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/mapbox-gl/2.8.1/mapbox-gl.js"></script>
-  <link href="https://cdnjs.cloudflare.com/ajax/libs/mapbox-gl/2.8.1/mapbox-gl.css" rel="stylesheet" />
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Malaysia Flood Information Dashboard</title>
+    <script src="https://d3js.org/d3.v7.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/topojson/3.0.2/topojson.min.js"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+        }
+        header {
+            background-color: #007bff;
+            color: white;
+            padding: 1rem;
+            text-align: center;
+        }
+        .container {
+            padding: 20px;
+        }
+        .dashboard {
+            display: flex;
+            justify-content: space-around;
+            flex-wrap: wrap;
+            margin-bottom: 20px;
+        }
+        .card {
+            background: #f9f9f9;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            padding: 10px;
+            text-align: center;
+            width: 30%;
+            margin: 10px;
+        }
+        svg {
+            width: 100%;
+            height: 500px;
+        }
+    </style>
 </head>
 <body>
-  <header>
-    <h1>Malaysia Flood Dashboard</h1>
-    <p>Real-time Flood Information and Map Visualization</p>
-  </header>
+    <header>
+        <h1>Malaysia Flood Information Dashboard</h1>
+        <p>Real-time flood relief data visualization</p>
+    </header>
 
-  <div id="dashboard">
-    <div id="map"></div>
-    <div id="data-table">
-      <h2>Flood Data</h2>
-      <div id="table-container"></div>
+    <div class="container">
+        <div class="dashboard">
+            <div class="card">
+                <h3>Total PPS</h3>
+                <p id="total-pps">Loading...</p>
+            </div>
+            <div class="card">
+                <h3>Total Victims</h3>
+                <p id="total-victims">Loading...</p>
+            </div>
+            <div class="card">
+                <h3>Total Families</h3>
+                <p id="total-families">Loading...</p>
+            </div>
+        </div>
+
+        <h2>Malaysia Map</h2>
+        <svg id="map"></svg>
     </div>
-  </div>
 
-  <script src="https://d3js.org/d3.v6.min.js"></script>
-  <script src="script.js"></script>
+    <script>
+        const mapWidth = 960;
+        const mapHeight = 500;
+
+        // Create SVG container for the map
+        const svg = d3.select("#map")
+            .attr("viewBox", `0 0 ${mapWidth} ${mapHeight}`);
+
+        const projection = d3.geoMercator()
+            .center([115, 4]) // Center on Malaysia
+            .scale(1300)
+            .translate([mapWidth / 2, mapHeight / 2]);
+
+        const path = d3.geoPath().projection(projection);
+
+        const loadMapData = async () => {
+            const semenanjungURL = "https://infobencanajkmv2.jkm.gov.my/assets/data/malaysia/arcgis_district_semenanjung.geojson";
+            const borneoURL = "https://infobencanajkmv2.jkm.gov.my/assets/data/malaysia/arcgis_district_borneo.geojson";
+
+            try {
+                const [semenanjungData, borneoData] = await Promise.all([
+                    fetch(semenanjungURL).then(res => res.json()),
+                    fetch(borneoURL).then(res => res.json()),
+                ]);
+
+                const mapData = { features: [...semenanjungData.features, ...borneoData.features] };
+
+                svg.selectAll("path")
+                    .data(mapData.features)
+                    .enter()
+                    .append("path")
+                    .attr("d", path)
+                    .attr("fill", "#ddd")
+                    .attr("stroke", "#333");
+
+                loadDashboardData();
+            } catch (error) {
+                console.error("Error loading map data:", error);
+            }
+        };
+
+        const loadDashboardData = async () => {
+            const apiURL = "https://infobencanajkmv2.jkm.gov.my/api/data-dashboard-table-pps.php?a=0&b=0&seasonmain_id=208&seasonnegeri_id=";
+
+            try {
+                const response = await fetch(apiURL);
+                const data = await response.json();
+
+                const totalPPS = data.reduce((acc, curr) => acc + Number(curr.total_pps || 0), 0);
+                const totalVictims = data.reduce((acc, curr) => acc + Number(curr.total_victims || 0), 0);
+                const totalFamilies = data.reduce((acc, curr) => acc + Number(curr.total_families || 0), 0);
+
+                document.getElementById("total-pps").textContent = totalPPS;
+                document.getElementById("total-victims").textContent = totalVictims;
+                document.getElementById("total-families").textContent = totalFamilies;
+            } catch (error) {
+                console.error("Error loading dashboard data:", error);
+            }
+        };
+
+        loadMapData();
+    </script>
 </body>
 </html>
