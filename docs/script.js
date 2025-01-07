@@ -1,170 +1,85 @@
-const apiUrl = 'https://api.allorigins.win/get?url=' + encodeURIComponent('https://infobencanajkmv2.jkm.gov.my/api/data-dashboard-table-pps.php?a=0&b=0&seasonmain_id=208&seasonnegeri_id=');
-const apiUrlAliranMangsa = 'https://api.allorigins.win/get?url=' + encodeURIComponent('https://infobencanajkmv2.jkm.gov.my/api/data-dashboard-aliran-trend.php?a=0&b=0&seasonmain_id=208&seasonnegeri_id=');
-const apiUrlAliranMasuk = 'https://api.allorigins.win/get?url=' + encodeURIComponent('https://infobencanajkmv2.jkm.gov.my/api/data-dashboard-aliran-trend-masuk.php?a=0&b=0&seasonmain_id=208&seasonnegeri_id=');
-const apiUrlAliranKeluar = 'https://api.allorigins.win/get?url=' + encodeURIComponent('https://infobencanajkmv2.jkm.gov.my/api/data-dashboard-aliran-trend-balik.php?a=0&b=0&seasonmain_id=208&seasonnegeri_id=');
+// Utility function to handle CORS
+const proxyUrl = 'https://api.allorigins.win/get?url=';
 
-document.addEventListener('DOMContentLoaded', () => {
-    const tableContainer = document.getElementById('table-container');
-    
-    // Fetch data for PPS overview
-    fetchData(apiUrl, displayData);
+// API URLs
+const urls = [
+    'https://infobencanajkmv2.jkm.gov.my/assets/data/malaysia/arcgis_district_semenanjung.geojson',
+    'https://infobencanajkmv2.jkm.gov.my/assets/data/malaysia/arcgis_district_borneo.geojson',
+    'https://infobencanajkmv2.jkm.gov.my/api/data-dashboard-table-pps.php?a=0&b=0&seasonmain_id=208&seasonnegeri_id=',
+    'https://infobencanajkmv2.jkm.gov.my/api/data-dashboard-aliran-trend.php?a=0&b=0&seasonmain_id=208&seasonnegeri_id='
+];
 
-    // Fetch data for Aliran Mangsa
-    fetchData(apiUrlAliranMangsa, (data) => displayFlowChart(data, 'flowChart', 'Jumlah Mangsa', 'mangsa'));
-
-    // Fetch data for Aliran Mangsa Masuk
-    fetchData(apiUrlAliranMasuk, (data) => displayFlowChart(data, 'flowChartIn', 'Mangsa Masuk', 'masuk'));
-
-    // Fetch data for Aliran Mangsa Keluar
-    fetchData(apiUrlAliranKeluar, (data) => displayFlowChart(data, 'flowChartOut', 'Mangsa Keluar', 'balik'));
-
-    loadMap();
-});
-
-// Helper function to fetch data and handle errors
-function fetchData(url, callback) {
-    fetch(url)
-        .then(response => response.json())
-        .then(data => {
-            try {
-                const jsonData = JSON.parse(data.contents);
-                callback(jsonData); // Call the provided callback function
-            } catch (error) {
-                console.error('Ralat dalam memproses data:', error.message);
-                alert('Gagal untuk memproses data.');
-            }
-        })
-        .catch(error => {
-            console.error('Ralat memuatkan data:', error.message);
-            alert('Gagal memuatkan data.');
-        });
+// Function to fetch data from API using proxy
+async function fetchData(url) {
+    try {
+        const response = await fetch(proxyUrl + encodeURIComponent(url));
+        const data = await response.json();
+        
+        if (data.contents) {
+            return JSON.parse(data.contents);
+        } else {
+            throw new Error('No valid JSON response');
+        }
+    } catch (error) {
+        console.error('Error fetching data:', error);
+        alert('Error fetching data: ' + error.message);
+        return null;
+    }
 }
 
-// Display data in the table for PPS overview
-function displayData(data) {
-    const tableContainer = document.getElementById('table-container');
-    if (!data.ppsbuka || data.ppsbuka.length === 0) {
-        tableContainer.innerHTML = '<p>Tiada data yang tersedia.</p>';
+// Function to process and display chart
+async function loadChartData() {
+    // Fetch data from multiple URLs
+    const geojsonSemenanjung = await fetchData(urls[0]);
+    const geojsonBorneo = await fetchData(urls[1]);
+    const dashboardData = await fetchData(urls[2]);
+    const trendData = await fetchData(urls[3]);
+
+    if (!geojsonSemenanjung || !geojsonBorneo || !dashboardData || !trendData) {
+        console.error('One or more data sources failed to load.');
         return;
     }
 
-    let tableHTML = `
-        <table>
-            <thead>
-                <tr>
-                    <th>Nama PPS</th>
-                    <th>Negeri</th>
-                    <th>Daerah</th>
-                    <th>Mangsa</th>
-                    <th>Keluarga</th>
-                    <th>Kapasiti</th>
-                </tr>
-            </thead>
-            <tbody>
-    `;
+    // Process the data (this is an example, adjust according to the actual data structure)
+    const labels = dashboardData.map(item => item.ppsbuka); // Replace with actual field
+    const dataValues = dashboardData.map(item => item.someField); // Replace with actual field
 
-    data.ppsbuka.forEach(item => {
-        tableHTML += `
-            <tr>
-                <td>${item.nama}</td>
-                <td>${item.negeri}</td>
-                <td>${item.daerah}</td>
-                <td>${item.mangsa}</td>
-                <td>${item.keluarga}</td>
-                <td>${item.kapasiti}</td>
-            </tr>
-        `;
-    });
-
-    tableHTML += `</tbody></table>`;
-    tableContainer.innerHTML = tableHTML;
-}
-
-// Load the map using Leaflet
-function loadMap() {
-    const map = L.map('map').setView([4.2105, 101.9758], 6);
-
-    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-        attribution: '&copy; OpenStreetMap contributors',
-    }).addTo(map);
-
-    const geojsonUrlSemenanjung = 'https://api.allorigins.win/get?url=' + encodeURIComponent('https://infobencanajkmv2.jkm.gov.my/assets/data/malaysia/arcgis_district_semenanjung.geojson');
-    const geojsonUrlBorneo = 'https://api.allorigins.win/get?url=' + encodeURIComponent('https://infobencanajkmv2.jkm.gov.my/assets/data/malaysia/arcgis_district_borneo.geojson');
-
-    fetch(geojsonUrlSemenanjung)
-        .then(response => response.json())
-        .then(data => {
-            try {
-                const jsonData = JSON.parse(data.contents);
-                L.geoJSON(jsonData).addTo(map);
-            } catch (error) {
-                console.error('Ralat dalam memproses geojson Semenanjung:', error.message);
-            }
-        })
-        .catch(error => console.error('Ralat memuatkan geojson Semenanjung:', error));
-
-    fetch(geojsonUrlBorneo)
-        .then(response => response.json())
-        .then(data => {
-            try {
-                const jsonData = JSON.parse(data.contents);
-                L.geoJSON(jsonData).addTo(map);
-            } catch (error) {
-                console.error('Ralat dalam memproses geojson Borneo:', error.message);
-            }
-        })
-        .catch(error => console.error('Ralat memuatkan geojson Borneo:', error));
-}
-
-// Display flow chart (for total victims, incoming or outgoing victims)
-function displayFlowChart(data, chartId, label, key) {
-    const ctx = document.getElementById(chartId).getContext('2d');
-    let labels = [];
-    let values = [];
-
-    if (data && data.tarikh && data[key]) {
-        data.tarikh.forEach((date, index) => {
-            labels.push(date);
-            values.push(data[key][index] || 0);  // Default to 0 if no data for the key
-        });
-
-        const chartData = {
+    // Chart.js chart setup
+    const ctx = document.getElementById('floodChart').getContext('2d');
+    const chart = new Chart(ctx, {
+        type: 'line',
+        data: {
             labels: labels,
             datasets: [{
-                label: label,
-                data: values,
-                borderColor: '#007bff',
-                fill: false,
-                tension: 0.1
+                label: 'Flood Data Over Time',
+                data: dataValues,
+                borderColor: 'rgba(75, 192, 192, 1)',
+                backgroundColor: 'rgba(75, 192, 192, 0.2)',
+                fill: true,
             }]
-        };
-
-        new Chart(ctx, {
-            type: 'line',
-            data: chartData,
-            options: {
-                responsive: true,
-                plugins: {
-                    legend: {
-                        position: 'top'
-                    },
-                    tooltip: {
-                        mode: 'index',
-                        intersect: false
+        },
+        options: {
+            responsive: true,
+            scales: {
+                x: {
+                    title: {
+                        display: true,
+                        text: 'Date'
                     }
                 },
-                scales: {
-                    x: {
-                        type: 'category',
-                        labels: labels
+                y: {
+                    title: {
+                        display: true,
+                        text: 'Flood Count'
                     },
-                    y: {
-                        beginAtZero: true
-                    }
+                    min: 0
                 }
             }
-        });
-    } else {
-        console.warn('Tiada data untuk carta aliran');
-    }
+        }
+    });
 }
+
+// Run the loadChartData function when the page is ready
+window.onload = function() {
+    loadChartData();
+};
