@@ -1,5 +1,4 @@
 const apiUrl = 'https://api.allorigins.win/get?url=' + encodeURIComponent('https://infobencanajkmv2.jkm.gov.my/api/data-dashboard-table-pps.php?a=0&b=0&seasonmain_id=208&seasonnegeri_id=');
-
 const apiUrlAliranMangsa = 'https://api.allorigins.win/get?url=' + encodeURIComponent('https://infobencanajkmv2.jkm.gov.my/api/data-dashboard-aliran-trend.php?a=0&b=0&seasonmain_id=208&seasonnegeri_id=');
 const apiUrlAliranMasuk = 'https://api.allorigins.win/get?url=' + encodeURIComponent('https://infobencanajkmv2.jkm.gov.my/api/data-dashboard-aliran-trend-masuk.php?a=0&b=0&seasonmain_id=208&seasonnegeri_id=');
 const apiUrlAliranKeluar = 'https://api.allorigins.win/get?url=' + encodeURIComponent('https://infobencanajkmv2.jkm.gov.my/api/data-dashboard-aliran-trend-balik.php?a=0&b=0&seasonmain_id=208&seasonnegeri_id=');
@@ -7,8 +6,14 @@ const apiUrlAliranKeluar = 'https://api.allorigins.win/get?url=' + encodeURIComp
 document.addEventListener('DOMContentLoaded', () => {
     const tableContainer = document.getElementById('table-container');
 
+    // Fetch data for the table
     fetch(apiUrl)
-        .then(response => response.json())
+        .then(response => {
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+            return response.json();
+        })
         .then(data => {
             console.log('Raw proxy data:', data);
             try {
@@ -30,7 +35,12 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Fetch and display the Aliran Jumlah Mangsa chart
     fetch(apiUrlAliranMangsa)
-        .then(response => response.json())
+        .then(response => {
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+            return response.json();
+        })
         .then(data => {
             console.log('Aliran Jumlah Mangsa data:', data);
             try {
@@ -45,7 +55,12 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Fetch and display the Aliran Mangsa Masuk chart
     fetch(apiUrlAliranMasuk)
-        .then(response => response.json())
+        .then(response => {
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+            return response.json();
+        })
         .then(data => {
             console.log('Aliran Mangsa Masuk data:', data);
             try {
@@ -60,7 +75,12 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Fetch and display the Aliran Mangsa Keluar chart
     fetch(apiUrlAliranKeluar)
-        .then(response => response.json())
+        .then(response => {
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+            return response.json();
+        })
         .then(data => {
             console.log('Aliran Mangsa Keluar data:', data);
             try {
@@ -126,7 +146,12 @@ function loadMap() {
     const geojsonUrlBorneo = 'https://api.allorigins.win/get?url=' + encodeURIComponent('https://infobencanajkmv2.jkm.gov.my/assets/data/malaysia/arcgis_district_borneo.geojson');
 
     fetch(geojsonUrlSemenanjung)
-        .then(response => response.json())
+        .then(response => {
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+            return response.json();
+        })
         .then(data => {
             try {
                 const jsonData = JSON.parse(data.contents);
@@ -138,7 +163,12 @@ function loadMap() {
         .catch(error => console.error('Ralat memuatkan geojson Semenanjung:', error));
 
     fetch(geojsonUrlBorneo)
-        .then(response => response.json())
+        .then(response => {
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+            return response.json();
+        })
         .then(data => {
             try {
                 const jsonData = JSON.parse(data.contents);
@@ -292,13 +322,15 @@ function filterTable() {
     }
 
     tableRows.forEach(row => {
-        const negeri = row.cells[1].innerText.toLowerCase();
-        const daerah = row.cells[2].innerText.toLowerCase();
+        const columns = row.querySelectorAll('td');
+        const name = columns[0].textContent.trim().toLowerCase();
+        const state = columns[1].textContent.trim().toLowerCase();
+        const district = columns[2].textContent.trim().toLowerCase();
 
-        if (negeri.includes(searchInput) || daerah.includes(searchInput)) {
-            row.style.display = ""; // Show matching rows
+        if (name.includes(searchInput) || state.includes(searchInput) || district.includes(searchInput)) {
+            row.style.display = '';
         } else {
-            row.style.display = "none"; // Hide non-matching rows
+            row.style.display = 'none';
         }
     });
 }
