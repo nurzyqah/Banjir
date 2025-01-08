@@ -112,17 +112,17 @@ tr:hover {
   background-color: #d0e4ff; /* Light blue highlight when row is hovered */
 }
 
-/* Medium size control for the pie chart */
+/* Small size control for the pie chart */
 .pie-chart-container {
-  width: 80%; /* Set the width to 80% of the container */
-  max-width: 500px; /* Maximum width of the pie chart */
-  height: 350px; /* Fixed height for a medium size */
+  width: 60%; /* Set the width to 60% of the container */
+  max-width: 300px; /* Maximum width of the pie chart */
+  height: 250px; /* Fixed height for a small size */
   margin: 0 auto; /* Center the chart horizontally */
 }
 
 @media screen and (max-width: 768px) {
   .pie-chart-container {
-    width: 90%; /* Slightly larger width on smaller screens */
-    height: 300px; /* Reduce height for mobile devices */
+    width: 80%; /* Slightly larger width on smaller screens */
+    height: 200px; /* Reduce height for mobile devices */
   }
 }
