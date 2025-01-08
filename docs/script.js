@@ -1,54 +1,107 @@
-const apiUrl = 'https://infobencanajkmv2.jkm.gov.my/api/pusat-buka.php?a=0&b=0';
+const apiUrl = 'https://api.allorigins.win/get?url=' + encodeURIComponent('https://infobencanajkmv2.jkm.gov.my/api/pusat-buka.php?a=0&b=0');
 
-async function fetchFloodData() {
-    try {
-        const response = await fetch(apiUrl);
-        const data = await response.json();
+document.addEventListener('DOMContentLoaded', () => {
+    const tableContainer = document.getElementById('table-container');
 
-        if (data.points && data.points.length > 0) {
-            displayData(data.points);
-        } else {
-            displayNoDataMessage();
-        }
-    } catch (error) {
-        console.error('Error fetching data:', error);
-        displayErrorMessage();
+    fetch(apiUrl)
+        .then(response => response.json())
+        .then(data => {
+            console.log('Raw proxy data:', data);
+            if (data.contents) {
+                console.log('Contents:', data.contents);
+                try {
+                    const jsonData = JSON.parse(data.contents);
+                    displayData(jsonData);
+                    displayPieChart(jsonData);
+                } catch (error) {
+                    console.error('Error processing data:', error.message);
+                    tableContainer.innerHTML = `<p style="color: red;">Failed to process data: ${error.message}</p>`;
+                }
+            } else {
+                console.error('No contents in response');
+                tableContainer.innerHTML = `<p style="color: red;">Failed to load data: No contents received from API.</p>`;
+            }
+        })
+        .catch(error => {
+            console.error('Error fetching data:', error.message);
+            tableContainer.innerHTML = `<p style="color: red;">Failed to load data: ${error.message}</p>`;
+        });
+
+    loadMap();
+});
+
+function displayData(data) {
+    const tableContainer = document.getElementById('table-container');
+    console.log('Displaying data:', data);
+
+    if (!data || !data.ppsbuka || data.ppsbuka.length === 0) {
+        tableContainer.innerHTML = '<p>No data available.</p>';
+        return;
     }
-}
 
-function displayData(points) {
-    const dataContainer = document.getElementById('data');
-    let output = '<ul>';
+    let tableHTML = `
+        <table>
+            <thead>
+                <tr>
+                    <th>Nama PPS</th>
+                    <th>Negeri</th>
+                    <th>Daerah</th>
+                    <th>Mangsa</th>
+                    <th>Keluarga</th>
+                    <th>Kapasiti</th>
+                </tr>
+            </thead>
+            <tbody>
+    `;
 
-    points.forEach(point => {
-        output += `
-            <li>
-                <strong>${point.name}</strong><br>
-                Negeri: ${point.negeri}<br>
-                Daerah: ${point.daerah}<br>
-                Mukim: ${point.mukim}<br>
-                Bencana: ${point.bencana}<br>
-                Mangsa: ${point.mangsa}<br>
-                Keluarga: ${point.keluarga}<br>
-                Kapasiti: ${point.kapasiti}<br>
-                Lokasi: ${point.latti}, ${point.longi}
-            </li>
+    data.ppsbuka.forEach(item => {
+        tableHTML += `
+            <tr>
+                <td>${item.nama || 'N/A'}</td>
+                <td>${item.negeri || 'N/A'}</td>
+                <td>${item.daerah || 'N/A'}</td>
+                <td>${item.mangsa || 'N/A'}</td>
+                <td>${item.keluarga || 'N/A'}</td>
+                <td>${item.kapasiti || 'N/A'}</td>
+            </tr>
         `;
     });
 
-    output += '</ul>';
-    dataContainer.innerHTML = output;
+    tableHTML += `</tbody></table>`;
+    tableContainer.innerHTML = tableHTML;
 }
 
-function displayNoDataMessage() {
-    const dataContainer = document.getElementById('data');
-    dataContainer.innerHTML = 'Tiada data yang tersedia.';
+function loadMap() {
+    const map = L.map('map').setView([4.2105, 101.9758], 6);
+
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        attribution: '&copy; OpenStreetMap contributors',
+    }).addTo(map);
+
+    // Add more map features or data points as needed
 }
 
-function displayErrorMessage() {
-    const dataContainer = document.getElementById('data');
-    dataContainer.innerHTML = 'Ralat dalam mendapatkan data.';
-}
+function displayPieChart(data) {
+    if (!data || !data.ppsbuka) {
+        console.warn('No data available for pie chart');
+        return;
+    }
 
-// Call the function to fetch and display the data
-fetchFloodData();
+    const totalMangsa = data.ppsbuka.reduce((acc, item) => acc + parseInt(item.mangsa, 10), 0);
+    const totalKeluarga = data.ppsbuka.reduce((acc, item) => acc + parseInt(item.keluarga, 10), 0);
+
+    const ctx = document.getElementById('floodPieChart').getContext('2d');
+    new Chart(ctx, {
+        type: 'pie',
+        data: {
+            labels: ['Mangsa', 'Keluarga'],
+            datasets: [{
+                data: [totalMangsa, totalKeluarga],
+                backgroundColor: ['#FF6384', '#36A2EB']
+            }]
+        },
+        options: {
+            responsive: true
+        }
+    });
+}
