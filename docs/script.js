@@ -7,13 +7,19 @@ document.addEventListener('DOMContentLoaded', () => {
         .then(response => response.json())
         .then(data => {
             console.log('Raw proxy data:', data);
-            try {
-                const jsonData = JSON.parse(data.contents);
-                displayData(jsonData);
-                displayPieChart(jsonData);
-            } catch (error) {
-                console.error('Ralat dalam memproses data:', error.message);
-                tableContainer.innerHTML = `<p style="color: red;">Gagal untuk memproses data: ${error.message}</p>`;
+            if (data.contents) {
+                console.log('Contents:', data.contents);
+                try {
+                    const jsonData = JSON.parse(data.contents);
+                    displayData(jsonData);
+                    displayPieChart(jsonData);
+                } catch (error) {
+                    console.error('Ralat dalam memproses data:', error.message);
+                    tableContainer.innerHTML = `<p style="color: red;">Gagal untuk memproses data: ${error.message}</p>`;
+                }
+            } else {
+                console.error('No contents in response');
+                tableContainer.innerHTML = `<p style="color: red;">Gagal untuk memproses data: No contents received from API.</p>`;
             }
         })
         .catch(error => {
@@ -28,7 +34,7 @@ function displayData(data) {
     const tableContainer = document.getElementById('table-container');
     console.log('Memaparkan data:', data);
 
-    if (!data.ppsbuka || data.ppsbuka.length === 0) {
+    if (!data || !data.ppsbuka || data.ppsbuka.length === 0) {
         tableContainer.innerHTML = '<p>Tiada data yang tersedia.</p>';
         return;
     }
@@ -73,4 +79,31 @@ function loadMap() {
     }).addTo(map);
 
     // Add more map features or data points as needed
+}
+
+function displayPieChart(data) {
+    // Check if the data has required fields
+    if (!data || !data.ppsbuka) {
+        console.warn('No data available for pie chart');
+        return;
+    }
+
+    // Aggregate data for the pie chart
+    const totalMangsa = data.ppsbuka.reduce((acc, item) => acc + parseInt(item.mangsa, 10), 0);
+    const totalKeluarga = data.ppsbuka.reduce((acc, item) => acc + parseInt(item.keluarga, 10), 0);
+
+    const ctx = document.getElementById('floodPieChart').getContext('2d');
+    new Chart(ctx, {
+        type: 'pie',
+        data: {
+            labels: ['Mangsa', 'Keluarga'],
+            datasets: [{
+                data: [totalMangsa, totalKeluarga],
+                backgroundColor: ['#FF6384', '#36A2EB']
+            }]
+        },
+        options: {
+            responsive: true
+        }
+    });
 }
