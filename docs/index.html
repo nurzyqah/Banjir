@@ -12,61 +12,59 @@
     <div class="container">
         <h1>PAPAN PEMUKA BANJIR MALAYSIA</h1>
 
-    <div class="card">
-        <div class="card-header">CARIAN LOKASI</div>
-        <div class="card-body">
-        <input type="text" id="searchInput" placeholder="Cari negeri atau daerah...">
-        <button onclick="filterTable()">Cari</button>
+        <div class="card">
+            <div class="card-header">CARIAN LOKASI</div>
+            <div class="card-body">
+                <input type="text" id="searchInput" placeholder="Cari negeri atau daerah...">
+                <button onclick="filterTable()">Cari</button>
+            </div>
         </div>
-    </div>
 
-    <div class="card" id="table-container">
-        <div class="card-header">GAMBARAN KESELURUHAN</div>
-        <div class="card-body">
-            <p class="loading">Memuatkan data...</p>
+        <div class="card" id="table-container">
+            <div class="card-header">GAMBARAN KESELURUHAN</div>
+            <div class="card-body">
+                <p class="loading">Memuatkan data...</p>
+            </div>
         </div>
-    </div>
 
-    <div class="card" id="map-container">
-        <div class="card-header">PETA BANJIR</div>
-        <div class="card-body">
-            <div id="map" style="height: 400px;"></div>
+        <div class="card" id="map-container">
+            <div class="card-header">PETA BANJIR</div>
+            <div class="card-body">
+                <div id="map" style="height: 400px;"></div>
+            </div>
         </div>
-    </div>
 
-    <div class="card" id="pie-chart-container">
-        <div class="card-header">CARTA PAI JUMLAH MANGSA DAN KELUARGA</div>
-        <div class="card-body">
-            <canvas id="floodPieChart" width="300" height="300" style="display: block; box-sizing: border-box; height: 300px; width: 300px;"></canvas>
+        <div class="card" id="pie-chart-container">
+            <div class="card-header">CARTA PAI JUMLAH MANGSA DAN KELUARGA</div>
+            <div class="card-body">
+                <canvas id="floodPieChart" width="300" height="300"></canvas>
+            </div>
         </div>
-    </div>
 
-    <div class="card" id="category-chart-container">
-        <div class="card-header">ALIRAN JUMLAH MANGSA</div>
-        <div class="card-body">
-            <canvas id="categoryChart1"></canvas>
+        <div class="card">
+            <div class="card-header">ALIRAN JUMLAH MANGSA</div>
+            <div class="card-body">
+                <canvas id="categoryChart1"></canvas>
+            </div>
         </div>
-    </div>
-    
-    <div class="card" id="category-chart-container">
-        <div class="card-header">ALIRAN MANGSA MASUK</div>
-        <div class="card-body">
-            <canvas id="categoryChart2"></canvas>
-        </div>
-    </div>
-    
-    <div class="card" id="category-chart-container">
-        <div class="card-header">ALIRAN MANGSA KELUARA</div>
-        <div class="card-body">
-            <canvas id="categoryChart3"></canvas>
-        </div>
-    </div>
-    
 
+        <div class="card">
+            <div class="card-header">ALIRAN MANGSA MASUK</div>
+            <div class="card-body">
+                <canvas id="categoryChart2"></canvas>
+            </div>
+        </div>
+
+        <div class="card">
+            <div class="card-header">ALIRAN MANGSA KELUAR</div>
+            <div class="card-body">
+                <canvas id="categoryChart3"></canvas>
+            </div>
+        </div>
     </div>
 
     <script src="https://d3js.org/d3.v7.min.js"></script>
     <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
     <script src="script.js"></script>
 </body>
-</html
+</html>
