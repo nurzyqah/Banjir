@@ -24,6 +24,9 @@ document.addEventListener('DOMContentLoaded', () => {
             console.error('Error fetching data:', error.message);
             tableContainer.innerHTML = `<p style="color: red;">Failed to load data: ${error.message}</p>`;
         });
+
+    // Load GeoJSON data and display map
+    loadMap();
 });
 
 function displayData(data) {
@@ -65,4 +68,32 @@ function displayData(data) {
 
     tableHTML += `</tbody></table>`;
     tableContainer.innerHTML = tableHTML;
+}
+
+// Function to load the map and GeoJSON data
+function loadMap() {
+    // Initialize map centered at Malaysia's latitude and longitude
+    const map = L.map('map').setView([4.2105, 101.9758], 6); // Malaysia's coordinates
+
+    // Add OpenStreetMap tile layer
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
+    }).addTo(map);
+
+    // Load GeoJSON data for Malaysia districts
+    const geojsonUrlSemenanjung = 'https://infobencanajkmv2.jkm.gov.my/assets/data/malaysia/arcgis_district_semenanjung.geojson';
+    const geojsonUrlBorneo = 'https://infobencanajkmv2.jkm.gov.my/assets/data/malaysia/arcgis_district_borneo.geojson';
+
+    // Fetch and add GeoJSON layers for districts
+    fetch(geojsonUrlSemenanjung)
+        .then(response => response.json())
+        .then(data => {
+            L.geoJSON(data).addTo(map);
+        });
+
+    fetch(geojsonUrlBorneo)
+        .then(response => response.json())
+        .then(data => {
+            L.geoJSON(data).addTo(map);
+        });
 }

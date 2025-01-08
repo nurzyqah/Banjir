@@ -45,4 +45,8 @@ th {
   text-align: center;
   font-size: 16px;
   color: #666;
-} 
+}
+
+#map {
+  margin-top: 20px;
+}

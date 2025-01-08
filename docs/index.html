@@ -5,6 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Malaysia Flood Dashboard</title>
     <link rel="stylesheet" href="banjir.css">
+    <!-- Leaflet.js CSS -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
 </head>
 <body>
     <div class="container">
@@ -12,10 +14,13 @@
         <div id="table-container">
             <p class="loading">Loading data...</p>
         </div>
+        <!-- Add a map container -->
+        <div id="map" style="height: 400px;"></div>
     </div>
 
     <!-- Pautan ke D3.js dan script.js -->
     <script src="https://d3js.org/d3.v7.min.js"></script>
+    <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
     <script src="script.js"></script>
 </body>
-</html> 
+</html>
