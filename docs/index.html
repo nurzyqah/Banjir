@@ -12,51 +12,46 @@
     <div class="container">
         <h1>PAPAN PEMUKA BANJIR MALAYSIA</h1>
 
-        <!-- Carian Lokasi -->
-        <div class="card">
-            <div class="card-header">CARIAN LOKASI</div>
-            <div class="card-body">
-                <input type="text" id="searchInput" placeholder="Cari negeri atau daerah...">
-                <button onclick="filterTable()">Cari</button>
-            </div>
-        </div>
-
-        <!-- Gambaran Keseluruhan -->
-        <div class="card" id="table-container">
-            <div class="card-header">GAMBARAN KESELURUHAN</div>
-            <div class="card-body">
-                <p class="loading">Memuatkan data...</p>
-            </div>
-        </div>
-
-        <!-- Peta Banjir -->
-        <div class="card" id="map-container">
-            <div class="card-header">PETA BANJIR</div>
-            <div class="card-body">
-                <div id="map" style="height: 400px;"></div>
-            </div>
-        </div>
-
-        <!-- Carta Pai -->
-        <div class="card" id="pie-chart-container">
-            <div class="card-header">CARTA PAI JUMLAH MANGSA DAN KELUARGA</div>
-            <div class="card-body">
-                <canvas id="floodPieChart"></canvas>
-            </div>
-        </div>
-
-        <!-- Pecahan Kategori Mangsa -->
-        <div class="card" id="category-chart-container">
-            <div class="card-header">PECAHAN KATEGORI MANGSA</div>
-            <div class="card-body">
-                <canvas id="categoryChart"></canvas>
-            </div>
+    <div class="card">
+        <div class="card-header">CARIAN LOKASI</div>
+        <div class="card-body">
+        <input type="text" id="searchInput" placeholder="Cari negeri atau daerah...">
+        <button onclick="filterTable()">Cari</button>
         </div>
     </div>
 
-    <!-- Pautan ke D3.js dan script.js -->
+    <div class="card" id="table-container">
+        <div class="card-header">GAMBARAN KESELURUHAN</div>
+        <div class="card-body">
+            <p class="loading">Memuatkan data...</p>
+        </div>
+    </div>
+
+    <div class="card" id="map-container">
+        <div class="card-header">PETA BANJIR</div>
+        <div class="card-body">
+            <div id="map" style="height: 400px;"></div>
+        </div>
+    </div>
+
+    <div class="card" id="pie-chart-container">
+        <div class="card-header">CARTA PAI JUMLAH MANGSA DAN KELUARGA</div>
+        <div class="card-body">
+            <canvas id="floodPieChart"></canvas>
+        </div>
+    </div>
+
+    <div class="card" id="category-chart-container">
+        <div class="card-header">PECAHAN KATEGORI MANGSA</div>
+        <div class="card-body">
+            <canvas id="categoryChart"></canvas>
+        </div>
+    </div>
+
+    </div>
+
     <script src="https://d3js.org/d3.v7.min.js"></script>
     <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
     <script src="script.js"></script>
 </body>
-</html>
+</html
