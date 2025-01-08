@@ -1,4 +1,4 @@
-const apiUrl = 'https://api.allorigins.win/get?url=' + encodeURIComponent('https://infobencanajkmv2.jkm.gov.my/api/data-dashboard-table-pps.php?a=0&b=0&seasonmain_id=208&seasonnegeri_id=');
+const apiUrl = 'https://api.allorigins.win/get?url=' + encodeURIComponent('https://infobencanajkmv2.jkm.gov.my/api/pusat-buka.php?a=0&b=0');
 
 document.addEventListener('DOMContentLoaded', () => {
     const tableContainer = document.getElementById('table-container');
@@ -57,12 +57,12 @@ function displayData(data) {
     data.ppsbuka.forEach(item => {
         tableHTML += `
             <tr>
-                <td>${item.nama}</td>
-                <td>${item.negeri}</td>
-                <td>${item.daerah}</td>
-                <td>${item.mangsa}</td>
-                <td>${item.keluarga}</td>
-                <td>${item.kapasiti}</td>
+                <td>${item.nama || 'N/A'}</td>
+                <td>${item.negeri || 'N/A'}</td>
+                <td>${item.daerah || 'N/A'}</td>
+                <td>${item.mangsa || 'N/A'}</td>
+                <td>${item.keluarga || 'N/A'}</td>
+                <td>${item.kapasiti || 'N/A'}</td>
             </tr>
         `;
     });
@@ -82,13 +82,11 @@ function loadMap() {
 }
 
 function displayPieChart(data) {
-    // Check if the data has required fields
     if (!data || !data.ppsbuka) {
         console.warn('No data available for pie chart');
         return;
     }
 
-    // Aggregate data for the pie chart
     const totalMangsa = data.ppsbuka.reduce((acc, item) => acc + parseInt(item.mangsa, 10), 0);
     const totalKeluarga = data.ppsbuka.reduce((acc, item) => acc + parseInt(item.keluarga, 10), 0);
 
