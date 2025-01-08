@@ -104,7 +104,15 @@ function displayPieChart(data) {
             }]
         },
         options: {
-            responsive: true
+            responsive: false,  // Disable responsive behavior
+            maintainAspectRatio: false,  // Allow custom aspect ratio
+            width: 250,  // Set fixed width
+            height: 250, // Set fixed height
+            plugins: {
+                legend: {
+                    position: 'top'
+                }
+            }
         }
     });
 }
