@@ -84,7 +84,7 @@ h1 {
   th, td {
       padding: 8px;
   }
-  '
+  
   /* Add this to banjir.css */
 table.formal-table {
   width: 100%;
@@ -115,5 +115,5 @@ table.formal-table tr:hover {
 table.formal-table td {
   font-size: 14px;
 }
-'
+
 }
