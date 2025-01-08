@@ -78,8 +78,8 @@ function loadAliranKeluar() {
         });
 }
 
-function displayCategoryChart(data, chartTitle) {
-    const ctx = document.getElementById('categoryChart').getContext('2d');
+function displayCategoryChart(data, chartTitle, chartId) {
+    const ctx = document.getElementById(chartId).getContext('2d');
     const labels = data.points.map(item => item.date);  // Assuming date field is available
     const values = data.points.map(item => item.value);  // Adjust this depending on your response
 
@@ -100,6 +100,48 @@ function displayCategoryChart(data, chartTitle) {
             maintainAspectRatio: false
         }
     });
+}
+
+function loadAliranJumMangsa() {
+    fetch(aliranJumMangsaUrl)
+        .then(response => response.json())
+        .then(data => {
+            console.log('Aliran Jum Mangsa Data:', data);
+            if (data && data.points) {
+                displayCategoryChart(data, 'Aliran Jum Mangsa', 'categoryChart1');
+            }
+        })
+        .catch(error => {
+            console.error('Error loading Aliran Jum Mangsa data:', error.message);
+        });
+}
+
+function loadAliranMasuk() {
+    fetch(aliranMasukUrl)
+        .then(response => response.json())
+        .then(data => {
+            console.log('Aliran Masuk Data:', data);
+            if (data && data.points) {
+                displayCategoryChart(data, 'Aliran Mangsa Masuk', 'categoryChart2');
+            }
+        })
+        .catch(error => {
+            console.error('Error loading Aliran Mangsa Masuk data:', error.message);
+        });
+}
+
+function loadAliranKeluar() {
+    fetch(aliranKeluarUrl)
+        .then(response => response.json())
+        .then(data => {
+            console.log('Aliran Keluar Data:', data);
+            if (data && data.points) {
+                displayCategoryChart(data, 'Aliran Mangsa Keluar', 'categoryChart3');
+            }
+        })
+        .catch(error => {
+            console.error('Error loading Aliran Mangsa Keluar data:', error.message);
+        });
 }
 
 function displayData(data) {
