@@ -1,71 +1,68 @@
-// New API URLs
-const apiUrlPusatBuka = 'https://api.allorigins.win/get?url=' + encodeURIComponent('https://infobencanajkmv2.jkm.gov.my/api/pusat-buka.php?a=0&b=0');
-const apiUrlPieData = 'https://api.allorigins.win/get?url=' + encodeURIComponent('https://infobencanajkmv2.jkm.gov.my/api/data-dashboard-pie.php?a=0&b=0&seasonmain_id=209&seasonnegeri_id=');
-const apiUrlAliranMangsa = 'https://api.allorigins.win/get?url=' + encodeURIComponent('https://infobencanajkmv2.jkm.gov.my/api/data-dashboard-aliran-trend.php?a=0&b=0&seasonmain_id=209&seasonnegeri_id=');
-const apiUrlAliranMasuk = 'https://api.allorigins.win/get?url=' + encodeURIComponent('https://infobencanajkmv2.jkm.gov.my/api/data-dashboard-aliran-trend-masuk.php?a=0&b=0&seasonmain_id=209&seasonnegeri_id=');
-const apiUrlAliranKeluar = 'https://api.allorigins.win/get?url=' + encodeURIComponent('https://infobencanajkmv2.jkm.gov.my/api/data-dashboard-aliran-trend-balik.php?a=0&b=0&seasonmain_id=209&seasonnegeri_id=');
+const apiUrl = 'https://api.allorigins.win/get?url=' + encodeURIComponent('https://infobencanajkmv2.jkm.gov.my/api/data-dashboard-table-pps.php?a=0&b=0&seasonmain_id=208&seasonnegeri_id=');
 
-// Fetch pusat buka data
-fetch(apiUrlPusatBuka)
-    .then(response => response.json())
-    .then(data => {
-        console.log('Pusat Buka data:', data);
-        // Process and display pusat buka data as needed
-    })
-    .catch(error => console.error('Ralat memuatkan data pusat buka:', error.message));
+document.addEventListener('DOMContentLoaded', () => {
+    const tableContainer = document.getElementById('table-container');
 
-// Fetch and display the Pie Chart data
-fetch(apiUrlPieData)
-    .then(response => response.json())
-    .then(data => {
-        console.log('Data Dashboard Pie:', data);
-        try {
-            const jsonData = JSON.parse(data.contents);
-            displayPieChart(jsonData);
-        } catch (error) {
-            console.error('Ralat dalam memproses data untuk carta pai:', error.message);
-        }
-    })
-    .catch(error => console.error('Ralat memuatkan data untuk carta pai:', error.message));
+    fetch(apiUrl)
+        .then(response => response.text())  // Get raw response as text
+        .then(data => {
+            console.log('Raw proxy data:', data);  // Log the raw data to check for issues
+            try {
+                const jsonData = JSON.parse(data);  // Attempt to parse the response as JSON
+                if (jsonData && jsonData.contents) {
+                    const parsedData = JSON.parse(jsonData.contents);  // Parse the contents as JSON
+                    displayData(parsedData);  // Pass the parsed data to displayData
+                } else {
+                    throw new Error('Invalid JSON structure: missing contents');
+                }
+            } catch (error) {
+                console.error('Error parsing the data:', error.message);
+                tableContainer.innerHTML = `<p style="color: red;">Failed to parse data: ${error.message}</p>`;
+            }
+        })
+        .catch(error => {
+            console.error('Error fetching data:', error.message);
+            tableContainer.innerHTML = `<p style="color: red;">Failed to load data: ${error.message}</p>`;
+        });
+});
 
-// Fetch and display the Aliran Jumlah Mangsa chart
-fetch(apiUrlAliranMangsa)
-    .then(response => response.json())
-    .then(data => {
-        console.log('Aliran Jumlah Mangsa data:', data);
-        try {
-            const jsonData = JSON.parse(data.contents);
-            displayFlowChart(jsonData, 'flowChart', 'Jumlah Mangsa', 'mangsa');
-        } catch (error) {
-            console.error('Ralat dalam memproses data Aliran Jumlah Mangsa:', error.message);
-        }
-    })
-    .catch(error => console.error('Ralat memuatkan data Aliran Jumlah Mangsa:', error.message));
+function displayData(data) {
+    const tableContainer = document.getElementById('table-container');
+    console.log('Displaying data:', data);
 
-// Fetch and display the Aliran Mangsa Masuk chart
-fetch(apiUrlAliranMasuk)
-    .then(response => response.json())
-    .then(data => {
-        console.log('Aliran Mangsa Masuk data:', data);
-        try {
-            const jsonData = JSON.parse(data.contents);
-            displayFlowChart(jsonData, 'flowChartIn', 'Mangsa Masuk', 'masuk');
-        } catch (error) {
-            console.error('Ralat dalam memproses data Aliran Mangsa Masuk:', error.message);
-        }
-    })
-    .catch(error => console.error('Ralat memuatkan data Aliran Mangsa Masuk:', error.message));
+    if (!data.ppsbuka || data.ppsbuka.length === 0) {
+        tableContainer.innerHTML = '<p>No data available.</p>';
+        return;
+    }
 
-// Fetch and display the Aliran Mangsa Keluar chart
-fetch(apiUrlAliranKeluar)
-    .then(response => response.json())
-    .then(data => {
-        console.log('Aliran Mangsa Keluar data:', data);
-        try {
-            const jsonData = JSON.parse(data.contents);
-            displayFlowChart(jsonData, 'flowChartOut', 'Mangsa Keluar', 'balik');
-        } catch (error) {
-            console.error('Ralat dalam memproses data Aliran Mangsa Keluar:', error.message);
-        }
-    })
-    .catch(error => console.error('Ralat memuatkan data Aliran Mangsa Keluar:', error.message));
+    let tableHTML = `
+        <table border="1" style="width: 100%; border-collapse: collapse;">
+            <thead>
+                <tr>
+                    <th>PPS Name</th>
+                    <th>State</th>
+                    <th>District</th>
+                    <th>Victims</th>
+                    <th>Families</th>
+                    <th>Capacity</th>
+                </tr>
+            </thead>
+            <tbody>
+    `;
+
+    data.ppsbuka.forEach(item => {
+        tableHTML += `
+            <tr>
+                <td>${item.nama}</td>
+                <td>${item.negeri}</td>
+                <td>${item.daerah}</td>
+                <td>${item.mangsa}</td>
+                <td>${item.keluarga}</td>
+                <td>${item.kapasiti}</td>
+            </tr>
+        `;
+    });
+
+    tableHTML += `</tbody></table>`;
+    tableContainer.innerHTML = tableHTML;
+}

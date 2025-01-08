@@ -3,62 +3,19 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Flood Evacuation Dashboard</title>
-    <link rel="stylesheet" href="./styles/dashboard.css">
-    <script src="https://d3js.org/d3.v7.min.js"></script>
+    <title>Malaysia Flood Dashboard</title>
+    <link rel="stylesheet" href="banjir.css">
 </head>
 <body>
-    <header>
-        <nav>
-            <h1>Flood Evacuation Dashboard</h1>
-            <ul>
-                <li><a href="./index.html">Home</a></li>
-                <li><a href="#" id="darkModeToggle">🌙 Dark Mode</a></li>
-            </ul>
-        </nav>
-    </header>
-
-    <main>
-        <div class="last-updated">
-            Last Updated: <span id="update-time">Loading...</span>
+    <div class="container">
+        <h1>Malaysia Flood Dashboard</h1>
+        <div id="table-container">
+            <p class="loading">Loading data...</p>
         </div>
-        
-        <div class="stats-container">
-            <div class="stat-card" id="total-pps">
-                <h3>Total PPS</h3>
-                <p class="stat-value">Loading...</p>
-            </div>
-            <div class="stat-card" id="total-evacuees">
-                <h3>Total Evacuees</h3>
-                <p class="stat-value">Loading...</p>
-            </div>
-            <div class="stat-card" id="total-families">
-                <h3>Total Families</h3>
-                <p class="stat-value">Loading...</p>
-            </div>
-        </div>
+    </div>
 
-        <div class="charts-container">
-            <div class="chart-card">
-                <h2>Evacuees by District</h2>
-                <div id="bar-chart"></div>
-            </div>
-            <div class="chart-card">
-                <h2>PPS Distribution</h2>
-                <div id="pie-chart"></div>
-            </div>
-        </div>
-
-        <div class="table-container">
-            <h2>Detailed Information</h2>
-            <div id="data-table"></div>
-        </div>
-    </main>
-
-    <footer>
-        <p>Data source: JKM Malaysia (Static Demo Data)</p>
-    </footer>
-
-    <script src="./js/dashboard.js"></script>
+    <!-- Pautan ke D3.js dan script.js -->
+    <script src="https://d3js.org/d3.v7.min.js"></script>
+    <script src="script.js"></script>
 </body>
-</html>
+</html> 
