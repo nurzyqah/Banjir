@@ -1,4 +1,5 @@
-. {
+/* Global Styles */
+* {
   margin: 0;
   padding: 0;
   box-sizing: border-box;
@@ -12,7 +13,7 @@ body {
 }
 
 header {
-  background-color: #24292e;
+  background-color: #0056b3;
   color: white;
   padding: 1rem;
 }
@@ -38,9 +39,14 @@ nav a {
 }
 
 main {
-  max-width: 1400px;
+  max-width: 1200px;
   margin: 2rem auto;
-  padding: 0 1rem;
+  padding: 1rem;
+}
+
+.last-updated {
+  text-align: right;
+  margin-bottom: 1rem;
 }
 
 .stats-container {
@@ -54,7 +60,7 @@ main {
   background: white;
   padding: 1.5rem;
   border-radius: 8px;
-  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
   text-align: center;
 }
 
@@ -75,7 +81,7 @@ main {
   background: white;
   padding: 1.5rem;
   border-radius: 8px;
-  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
 .chart-card h2 {
@@ -87,7 +93,7 @@ main {
   background: white;
   padding: 1.5rem;
   border-radius: 8px;
-  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
   overflow-x: auto;
 }
 
@@ -103,25 +109,14 @@ main {
   border-bottom: 1px solid #e1e4e8;
 }
 
-.last-updated {
-  text-align: right;
-  margin-bottom: 1rem;
-  color: #666;
-  font-size: 0.9rem;
-}
-
-.dark-mode .last-updated {
-  color: #8b949e;
-}
-
 footer {
   text-align: center;
   padding: 2rem;
-  background: #24292e;
+  background: #0056b3;
   color: white;
 }
 
-/* Dark mode */
+/* Dark Mode */
 body.dark-mode {
   background-color: #0d1117;
   color: #c9d1d9;
