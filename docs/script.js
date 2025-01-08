@@ -1,89 +1,39 @@
-mapboxgl.accessToken = 'your-access-token-here'; // Replace with your Mapbox access token
-const map = new mapboxgl.Map({
-  container: 'map',
-  style: 'mapbox://styles/mapbox/streets-v11',
-  center: [101.9758, 4.2105], // Coordinates for Malaysia
-  zoom: 5
-});
-
-// CORS proxy URL
-const proxyUrl = 'https://cors-anywhere.herokuapp.com/';
-
-// URLs for GeoJSON and data
-const geoJsonUrls = [
-  'https://infobencanajkmv2.jkm.gov.my/assets/data/malaysia/arcgis_district_semenanjung.geojson',
-  'https://infobencanajkmv2.jkm.gov.my/assets/data/malaysia/arcgis_district_borneo.geojson'
-];
-
-const floodDataUrl = 'https://infobencanajkmv2.jkm.gov.my/api/data-dashboard-table-pps.php?a=0&b=0&seasonmain_id=208&seasonnegeri_id=';
-
-// Fetch GeoJSON Data through the CORS proxy
-Promise.all(geoJsonUrls.map(url => 
-  fetch(proxyUrl + url)
+// Fetch data from the API
+fetch('https://infobencanajkmv2.jkm.gov.my/api/data-dashboard-table-pps.php?a=0&b=0&seasonmain_id=208&seasonnegeri_id=')
     .then(response => response.json())
-    .catch(error => console.error('Error fetching GeoJSON:', error))
-))
-  .then(([semenanjungData, borneoData]) => {
-    map.on('load', () => {
-      map.addSource('semenanjung', {
-        type: 'geojson',
-        data: semenanjungData
-      });
-      map.addSource('borneo', {
-        type: 'geojson',
-        data: borneoData
-      });
+    .then(data => {
+        // Assuming data is an array of objects
+        const dataset = data; // Update this based on the actual structure of the data
 
-      map.addLayer({
-        id: 'semenanjung-layer',
-        type: 'fill',
-        source: 'semenanjung',
-        paint: {
-          'fill-color': '#088',
-          'fill-opacity': 0.5
-        }
-      });
+        // Set dimensions for the chart
+        const width = 600;
+        const height = 400;
+        const margin = {top: 20, right: 30, bottom: 40, left: 40};
 
-      map.addLayer({
-        id: 'borneo-layer',
-        type: 'fill',
-        source: 'borneo',
-        paint: {
-          'fill-color': '#008',
-          'fill-opacity': 0.5
-        }
-      });
-    });
-  })
-  .catch(error => console.error('Error in loading map data:', error));
+        // Create an SVG element
+        const svg = d3.select('#chart').append('svg')
+            .attr('width', width)
+            .attr('height', height);
 
-// Fetch flood data
-fetch(proxyUrl + floodDataUrl)
-  .then(response => response.json())
-  .then(data => {
-    createTable(data);
-  })
-  .catch(error => {
-    console.log('Error fetching flood data:', error);
-  });
+        // Create scales
+        const x = d3.scaleBand()
+            .domain(dataset.map(d => d.someProperty)) // Replace 'someProperty' with the actual property name
+            .range([margin.left, width - margin.right])
+            .padding(0.1);
 
-function createTable(data) {
-  const tableContainer = d3.select("#table-container");
-  const table = tableContainer.append("table");
-  const header = table.append("thead").append("tr");
-  const body = table.append("tbody");
+        const y = d3.scaleLinear()
+            .domain([0, d3.max(dataset, d => d.someValue)]) // Replace 'someValue' accordingly
+            .nice()
+            .range([height - margin.bottom, margin.top]);
 
-  // Assume the data is an array of objects
-  const columns = Object.keys(data[0]);
-
-  columns.forEach(col => {
-    header.append("th").text(col);
-  });
-
-  data.forEach(row => {
-    const tr = body.append("tr");
-    columns.forEach(col => {
-      tr.append("td").text(row[col]);
-    });
-  });
-}
+        // Add bars
+        svg.selectAll('.bar')
+            .data(dataset)
+            .enter().append('rect')
+            .attr('class', 'bar')
+            .attr('x', d => x(d.someProperty))
+            .attr('y', d => y(d.someValue))
+            .attr('height', d => y(0) - y(d.someValue))
+            .attr('width', x.bandwidth());
+    })
+    .catch(error => console.error('Error fetching data:', error));
