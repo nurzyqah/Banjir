@@ -19,11 +19,11 @@ document.addEventListener('DOMContentLoaded', () => {
                 }
             } else {
                 console.error('No contents in response');
-                tableContainer.innerHTML = `<p style="color: red;">Failed to load data: No contents received from API.</p>`;
+                tableContainer.innerHTML = `<p style="color: red;">Failed to process data: No contents received from API.</p>`;
             }
         })
         .catch(error => {
-            console.error('Error fetching data:', error.message);
+            console.error('Error loading data:', error.message);
             tableContainer.innerHTML = `<p style="color: red;">Failed to load data: ${error.message}</p>`;
         });
 
@@ -34,7 +34,7 @@ function displayData(data) {
     const tableContainer = document.getElementById('table-container');
     console.log('Displaying data:', data);
 
-    if (!data || !data.ppsbuka || data.ppsbuka.length === 0) {
+    if (!data || !data.points || data.points.length === 0) {
         tableContainer.innerHTML = '<p>No data available.</p>';
         return;
     }
@@ -46,6 +46,7 @@ function displayData(data) {
                     <th>Nama PPS</th>
                     <th>Negeri</th>
                     <th>Daerah</th>
+                    <th>Bencana</th>
                     <th>Mangsa</th>
                     <th>Keluarga</th>
                     <th>Kapasiti</th>
@@ -54,15 +55,16 @@ function displayData(data) {
             <tbody>
     `;
 
-    data.ppsbuka.forEach(item => {
+    data.points.forEach(item => {
         tableHTML += `
             <tr>
-                <td>${item.nama || 'N/A'}</td>
+                <td>${item.name || 'N/A'}</td>
                 <td>${item.negeri || 'N/A'}</td>
                 <td>${item.daerah || 'N/A'}</td>
-                <td>${item.mangsa || 0}</td>
-                <td>${item.keluarga || 0}</td>
-                <td>${item.kapasiti || 0}</td>
+                <td>${item.bencana || 'N/A'}</td>
+                <td>${item.mangsa || 'N/A'}</td>
+                <td>${item.keluarga || 'N/A'}</td>
+                <td>${item.kapasiti || 'N/A'}</td>
             </tr>
         `;
     });
@@ -82,18 +84,13 @@ function loadMap() {
 }
 
 function displayPieChart(data) {
-    if (!data || !data.ppsbuka || data.ppsbuka.length === 0) {
+    if (!data || !data.points) {
         console.warn('No data available for pie chart');
         return;
     }
 
-    const totalMangsa = data.ppsbuka.reduce((acc, item) => acc + (parseInt(item.mangsa, 10) || 0), 0);
-    const totalKeluarga = data.ppsbuka.reduce((acc, item) => acc + (parseInt(item.keluarga, 10) || 0), 0);
-
-    if (totalMangsa === 0 && totalKeluarga === 0) {
-        console.warn('No valid data for pie chart');
-        return;
-    }
+    const totalMangsa = data.points.reduce((acc, item) => acc + parseInt(item.mangsa, 10), 0);
+    const totalKeluarga = data.points.reduce((acc, item) => acc + parseInt(item.keluarga, 10), 0);
 
     const ctx = document.getElementById('floodPieChart').getContext('2d');
     new Chart(ctx, {
@@ -106,12 +103,7 @@ function displayPieChart(data) {
             }]
         },
         options: {
-            responsive: true,
-            plugins: {
-                legend: {
-                    position: 'top',
-                },
-            },
+            responsive: true
         }
     });
 }
