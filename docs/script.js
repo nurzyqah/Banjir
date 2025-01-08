@@ -15,16 +15,16 @@ document.addEventListener('DOMContentLoaded', () => {
                     displayPieChart(jsonData);
                 } catch (error) {
                     console.error('Error processing data:', error.message);
-                    tableContainer.innerHTML = <p style="color: red;">Failed to process data: ${error.message}</p>;
+                    tableContainer.innerHTML = `<p style="color: red;">Failed to process data: ${error.message}</p>`;
                 }
             } else {
                 console.error('No contents in response');
-                tableContainer.innerHTML = <p style="color: red;">Failed to process data: No contents received from API.</p>;
+                tableContainer.innerHTML = `<p style="color: red;">Failed to process data: No contents received from API.</p>`;
             }
         })
         .catch(error => {
             console.error('Error loading data:', error.message);
-            tableContainer.innerHTML = <p style="color: red;">Failed to load data: ${error.message}</p>;
+            tableContainer.innerHTML = `<p style="color: red;">Failed to load data: ${error.message}</p>`;
         });
 
     loadMap();
@@ -39,7 +39,7 @@ function displayData(data) {
         return;
     }
 
-    let tableHTML = 
+    let tableHTML = `
         <table class="formal-table">
             <thead>
                 <tr>
@@ -53,10 +53,10 @@ function displayData(data) {
                 </tr>
             </thead>
             <tbody>
-    ;
+    `;
 
     data.points.forEach(item => {
-        tableHTML += 
+        tableHTML += `
             <tr>
                 <td>${item.name || 'N/A'}</td>
                 <td>${item.negeri || 'N/A'}</td>
@@ -66,10 +66,10 @@ function displayData(data) {
                 <td>${item.keluarga || 'N/A'}</td>
                 <td>${item.kapasiti || 'N/A'}</td>
             </tr>
-        ;
+        `;
     });
 
-    tableHTML += </tbody></table>;
+    tableHTML += `</tbody></table>`;
     tableContainer.innerHTML = tableHTML;
 }
 
@@ -115,4 +115,4 @@ function displayPieChart(data) {
             }
         }
     });
-}    
+}
