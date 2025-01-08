@@ -4,51 +4,50 @@ document.addEventListener('DOMContentLoaded', () => {
     const tableContainer = document.getElementById('table-container');
 
     fetch(apiUrl)
-        .then(response => response.text())  // Get raw response as text
+        .then(response => response.text())
         .then(data => {
-            console.log('Raw proxy data:', data);  // Log the raw data to check for issues
+            console.log('Raw proxy data:', data);
             try {
-                const jsonData = JSON.parse(data);  // Attempt to parse the response as JSON
+                const jsonData = JSON.parse(data);
                 if (jsonData && jsonData.contents) {
-                    const parsedData = JSON.parse(jsonData.contents);  // Parse the contents as JSON
-                    displayData(parsedData);  // Pass the parsed data to displayData
-                    displayPieChart(parsedData);  // Add pie chart logic here
+                    const parsedData = JSON.parse(jsonData.contents);
+                    displayData(parsedData);
+                    displayPieChart(parsedData);
                 } else {
-                    throw new Error('Invalid JSON structure: missing contents');
+                    throw new Error('Struktur JSON tidak sah: kandungan hilang');
                 }
             } catch (error) {
-                console.error('Error parsing the data:', error.message);
-                tableContainer.innerHTML = `<p style="color: red;">Failed to parse data: ${error.message}</p>`;
+                console.error('Ralat dalam memproses data:', error.message);
+                tableContainer.innerHTML = `<p style="color: red;">Gagal untuk memproses data: ${error.message}</p>`;
             }
         })
         .catch(error => {
-            console.error('Error fetching data:', error.message);
-            tableContainer.innerHTML = `<p style="color: red;">Failed to load data: ${error.message}</p>`;
+            console.error('Ralat memuatkan data:', error.message);
+            tableContainer.innerHTML = `<p style="color: red;">Gagal untuk memuatkan data: ${error.message}</p>`;
         });
 
-    // Load GeoJSON data and display map
     loadMap();
 });
 
 function displayData(data) {
     const tableContainer = document.getElementById('table-container');
-    console.log('Displaying data:', data);
+    console.log('Memaparkan data:', data);
 
     if (!data.ppsbuka || data.ppsbuka.length === 0) {
-        tableContainer.innerHTML = '<p>No data available.</p>';
+        tableContainer.innerHTML = '<p>Tiada data yang tersedia.</p>';
         return;
     }
 
     let tableHTML = `
-        <table border="1" style="width: 100%; border-collapse: collapse;">
+        <table>
             <thead>
                 <tr>
-                    <th>PPS Name</th>
-                    <th>State</th>
-                    <th>District</th>
-                    <th>Victims</th>
-                    <th>Families</th>
-                    <th>Capacity</th>
+                    <th>Nama PPS</th>
+                    <th>Negeri</th>
+                    <th>Daerah</th>
+                    <th>Mangsa</th>
+                    <th>Keluarga</th>
+                    <th>Kapasiti</th>
                 </tr>
             </thead>
             <tbody>
@@ -71,98 +70,98 @@ function displayData(data) {
     tableContainer.innerHTML = tableHTML;
 }
 
-// Function to load the map and GeoJSON data
 function loadMap() {
-    // Initialize map centered at Malaysia's latitude and longitude
-    const map = L.map('map').setView([4.2105, 101.9758], 6); // Malaysia's coordinates
+    const map = L.map('map').setView([4.2105, 101.9758], 6);
 
-    // Add OpenStreetMap tile layer
     L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-        attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
+        attribution: '&copy; OpenStreetMap contributors',
     }).addTo(map);
 
-    // Load GeoJSON data for Malaysia districts
-    const geojsonUrlSemenanjung = 'https://infobencanajkmv2.jkm.gov.my/assets/data/malaysia/arcgis_district_semenanjung.geojson';
-    const geojsonUrlBorneo = 'https://infobencanajkmv2.jkm.gov.my/assets/data/malaysia/arcgis_district_borneo.geojson';
+    const geojsonUrlSemenanjung = 'https://api.codetabs.com/v1/proxy/?quest=' + encodeURIComponent('https://infobencanajkmv2.jkm.gov.my/assets/data/malaysia/arcgis_district_semenanjung.geojson');
+    const geojsonUrlBorneo = 'https://api.codetabs.com/v1/proxy/?quest=' + encodeURIComponent('https://infobencanajkmv2.jkm.gov.my/assets/data/malaysia/arcgis_district_borneo.geojson');
 
-    // Fetch and add GeoJSON layers for districts
     fetch(geojsonUrlSemenanjung)
         .then(response => response.json())
         .then(data => {
-            L.geoJSON(data).addTo(map);
-        });
+            if (data.contents) {
+                L.geoJSON(JSON.parse(data.contents)).addTo(map);
+            } else {
+                console.error('Respons yang tidak sah untuk Semenanjung geojson:', data);
+            }
+        })
+        .catch(error => console.error('Ralat memuatkan geojson Semenanjung:', error));
 
     fetch(geojsonUrlBorneo)
         .then(response => response.json())
         .then(data => {
-            L.geoJSON(data).addTo(map);
-        });
+            if (data.contents) {
+                L.geoJSON(JSON.parse(data.contents)).addTo(map);
+            } else {
+                console.error('Respons yang tidak sah untuk Borneo geojson:', data);
+            }
+        })
+        .catch(error => console.error('Ralat memuatkan geojson Borneo:', error));
 }
 
-// Function to display a pie chart based on the data
-// Function to display a pie chart based on the data
 function displayPieChart(data) {
-    const pieChartContainer = document.getElementById('pie-chart-container');
     const ctx = document.getElementById('floodPieChart').getContext('2d');
 
-    // Initialize counters for victims and families
-    let victims = 0;
-    let families = 0;
+    let totalVictims = 0;
+    let totalFamilies = 0;
 
-    // Loop through the data to accumulate total victims and families
-    data.ppsbuka.forEach(item => {
-        // Ensure that the numbers are valid integers, defaulting to 0 if not
-        victims += parseInt(item.mangsa) || 0;
-        families += parseInt(item.keluarga) || 0;
-    });
+    // Calculate totals
+    if (data.ppsbuka && data.ppsbuka.length > 0) {
+        data.ppsbuka.forEach(item => {
+            totalVictims += parseInt(item.mangsa) || 0;
+            totalFamilies += parseInt(item.keluarga) || 0;
+        });
+    } else {
+        console.warn('Tiada data untuk carta pai');
+        return;
+    }
 
-    // Prepare the data for the pie chart
+    // Chart data
     const pieData = {
-        labels: ['Victims', 'Families'],
+        labels: ['Jumlah Mangsa', 'Jumlah Keluarga'],
         datasets: [{
-            label: 'Flood Data (Victims vs Families)',
-            data: [victims, families],
-            backgroundColor: ['#FF5733', '#33FF57'],  // Red for victims, Green for families
-            borderColor: ['#FF5733', '#33FF57'],
-            borderWidth: 1
+            label: 'Bilangan',
+            data: [totalVictims, totalFamilies],
+            backgroundColor: ['#007bff', '#28a745'],
+            hoverOffset: 4
         }]
     };
 
-    // Options for the pie chart
-    const pieOptions = {
-        responsive: true,
-        plugins: {
-            legend: {
-                position: 'top',
-            },
-            tooltip: {
-                callbacks: {
-                    // Display the value in tooltip with a more user-friendly format
-                    label: function(tooltipItem) {
-                        // Display the value as a number with a comma for thousands
-                        return tooltipItem.label + ': ' + tooltipItem.raw.toLocaleString();
-                    },
-                    // Adding percentage tooltips
-                    afterLabel: function(tooltipItem) {
-                        const total = victims + families;
-                        const percentage = (tooltipItem.raw / total * 100).toFixed(2);
-                        return `(${percentage}% of total)`;
-                    }
+    // Create chart
+    new Chart(ctx, {
+        type: 'pie',
+        data: pieData,
+        options: {
+            plugins: {
+                legend: {
+                    position: 'bottom'
                 }
             }
         }
-    };
+    });
+}
 
-    // Check if victims or families are zero to avoid drawing an empty pie chart
-    if (victims > 0 || families > 0) {
-        // Create and render the pie chart
-        new Chart(ctx, {
-            type: 'pie',
-            data: pieData,
-            options: pieOptions
-        });
-    } else {
-        // If no data is available, display a message
-        pieChartContainer.innerHTML = '<p>No data available for the pie chart.</p>';
+function filterTable() {
+    const searchInput = document.getElementById('searchInput').value.trim().toLowerCase();
+    const tableRows = document.querySelectorAll('#table-container table tbody tr');
+
+    if (!searchInput) {
+        alert("Sila masukkan negeri atau daerah untuk carian.");
+        return;
     }
+
+    tableRows.forEach(row => {
+        const negeri = row.cells[1].innerText.toLowerCase();
+        const daerah = row.cells[2].innerText.toLowerCase();
+
+        if (negeri.includes(searchInput) || daerah.includes(searchInput)) {
+            row.style.display = ""; // Show matching rows
+        } else {
+            row.style.display = "none"; // Hide non-matching rows
+        }
+    });
 }
