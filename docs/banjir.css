@@ -49,4 +49,5 @@ th {
 
 #map {
   margin-top: 20px;
+  height: 400px; /* Adjust map container height */
 }

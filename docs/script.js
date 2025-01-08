@@ -12,6 +12,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 if (jsonData && jsonData.contents) {
                     const parsedData = JSON.parse(jsonData.contents);  // Parse the contents as JSON
                     displayData(parsedData);  // Pass the parsed data to displayData
+                    displayPieChart(parsedData);  // Add pie chart logic here
                 } else {
                     throw new Error('Invalid JSON structure: missing contents');
                 }
@@ -96,4 +97,72 @@ function loadMap() {
         .then(data => {
             L.geoJSON(data).addTo(map);
         });
+}
+
+// Function to display a pie chart based on the data
+// Function to display a pie chart based on the data
+function displayPieChart(data) {
+    const pieChartContainer = document.getElementById('pie-chart-container');
+    const ctx = document.getElementById('floodPieChart').getContext('2d');
+
+    // Initialize counters for victims and families
+    let victims = 0;
+    let families = 0;
+
+    // Loop through the data to accumulate total victims and families
+    data.ppsbuka.forEach(item => {
+        // Ensure that the numbers are valid integers, defaulting to 0 if not
+        victims += parseInt(item.mangsa) || 0;
+        families += parseInt(item.keluarga) || 0;
+    });
+
+    // Prepare the data for the pie chart
+    const pieData = {
+        labels: ['Victims', 'Families'],
+        datasets: [{
+            label: 'Flood Data (Victims vs Families)',
+            data: [victims, families],
+            backgroundColor: ['#FF5733', '#33FF57'],  // Red for victims, Green for families
+            borderColor: ['#FF5733', '#33FF57'],
+            borderWidth: 1
+        }]
+    };
+
+    // Options for the pie chart
+    const pieOptions = {
+        responsive: true,
+        plugins: {
+            legend: {
+                position: 'top',
+            },
+            tooltip: {
+                callbacks: {
+                    // Display the value in tooltip with a more user-friendly format
+                    label: function(tooltipItem) {
+                        // Display the value as a number with a comma for thousands
+                        return tooltipItem.label + ': ' + tooltipItem.raw.toLocaleString();
+                    },
+                    // Adding percentage tooltips
+                    afterLabel: function(tooltipItem) {
+                        const total = victims + families;
+                        const percentage = (tooltipItem.raw / total * 100).toFixed(2);
+                        return `(${percentage}% of total)`;
+                    }
+                }
+            }
+        }
+    };
+
+    // Check if victims or families are zero to avoid drawing an empty pie chart
+    if (victims > 0 || families > 0) {
+        // Create and render the pie chart
+        new Chart(ctx, {
+            type: 'pie',
+            data: pieData,
+            options: pieOptions
+        });
+    } else {
+        // If no data is available, display a message
+        pieChartContainer.innerHTML = '<p>No data available for the pie chart.</p>';
+    }
 }
