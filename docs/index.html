@@ -37,8 +37,35 @@
         <div class="card" id="pie-chart-container">
             <div class="card-header">CARTA PAI JUMLAH MANGSA DAN KELUARGA</div>
             <div class="card-body">
-                <canvas id="myPieChart"></canvas> 
+                <canvas id="floodPieChart" width="250" height="250"></canvas> <!-- Set the canvas size directly -->
             </div>
+        
+            <script>
+                const ctx = document.getElementById('floodPieChart').getContext('2d');
+        
+                new Chart(ctx, {
+                    type: 'pie',
+                    data: {
+                        labels: ['Mangsa', 'Keluarga'],
+                        datasets: [{
+                            data: [70, 30], // Example data
+                            backgroundColor: ['#FF6384', '#36A2EB']
+                        }]
+                    },
+                    options: {
+                        responsive: false, // Disable responsive behavior
+                        maintainAspectRatio: false, // Disable aspect ratio constraints
+                        width: 250,  // Set width explicitly
+                        height: 250, // Set height explicitly
+                        plugins: {
+                            legend: {
+                                position: 'top'
+                            }
+                        }
+                    }
+                });
+            </script>
+        
         </div>
 
         <div class="card" id="category-chart-container">
