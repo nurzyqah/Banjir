@@ -40,7 +40,7 @@ function displayData(data) {
     }
 
     let tableHTML = `
-        <table>
+        <table class="formal-table">
             <thead>
                 <tr>
                     <th>Nama PPS</th>
@@ -72,6 +72,7 @@ function displayData(data) {
     tableHTML += `</tbody></table>`;
     tableContainer.innerHTML = tableHTML;
 }
+
 
 function loadMap() {
     const map = L.map('map').setView([4.2105, 101.9758], 6);
