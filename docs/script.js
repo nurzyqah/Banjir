@@ -1,4 +1,7 @@
 const apiUrl = 'https://api.allorigins.win/get?url=' + encodeURIComponent('https://infobencanajkmv2.jkm.gov.my/api/pusat-buka.php?a=0&b=0');
+const aliranJumMangsaUrl = 'https://infobencanajkmv2.jkm.gov.my/api/data-dashboard-aliran-trend.php?a=0&b=0&seasonmain_id=209&seasonnegeri_id=';
+const aliranMasukUrl = 'https://infobencanajkmv2.jkm.gov.my/api/data-dashboard-aliran-trend-masuk.php?a=0&b=0&seasonmain_id=209&seasonnegeri_id=';
+const aliranKeluarUrl = 'https://infobencanajkmv2.jkm.gov.my/api/data-dashboard-aliran-trend-balik.php?a=0&b=0&seasonmain_id=209&seasonnegeri_id=';
 
 document.addEventListener('DOMContentLoaded', () => {
     const tableContainer = document.getElementById('table-container');
@@ -28,7 +31,76 @@ document.addEventListener('DOMContentLoaded', () => {
         });
 
     loadMap();
+    loadAliranJumMangsa();  // Load Aliran Jum Mangsa data
+    loadAliranMasuk();       // Load Aliran Mangsa Masuk data
+    loadAliranKeluar();      // Load Aliran Mangsa Keluar data
 });
+
+function loadAliranJumMangsa() {
+    fetch(aliranJumMangsaUrl)
+        .then(response => response.json())
+        .then(data => {
+            console.log('Aliran Jum Mangsa Data:', data);
+            if (data && data.points) {
+                displayCategoryChart(data, 'Aliran Jum Mangsa');
+            }
+        })
+        .catch(error => {
+            console.error('Error loading Aliran Jum Mangsa data:', error.message);
+        });
+}
+
+function loadAliranMasuk() {
+    fetch(aliranMasukUrl)
+        .then(response => response.json())
+        .then(data => {
+            console.log('Aliran Masuk Data:', data);
+            if (data && data.points) {
+                displayCategoryChart(data, 'Aliran Mangsa Masuk');
+            }
+        })
+        .catch(error => {
+            console.error('Error loading Aliran Mangsa Masuk data:', error.message);
+        });
+}
+
+function loadAliranKeluar() {
+    fetch(aliranKeluarUrl)
+        .then(response => response.json())
+        .then(data => {
+            console.log('Aliran Keluar Data:', data);
+            if (data && data.points) {
+                displayCategoryChart(data, 'Aliran Mangsa Keluar');
+            }
+        })
+        .catch(error => {
+            console.error('Error loading Aliran Mangsa Keluar data:', error.message);
+        });
+}
+
+function displayCategoryChart(data, chartTitle) {
+    const ctx = document.getElementById('categoryChart').getContext('2d');
+    const labels = data.points.map(item => item.date);  // Assuming date field is available
+    const values = data.points.map(item => item.value);  // Adjust this depending on your response
+
+    new Chart(ctx, {
+        type: 'line',
+        data: {
+            labels: labels,
+            datasets: [{
+                label: chartTitle,
+                data: values,
+                borderColor: '#FF6384',
+                backgroundColor: 'rgba(255, 99, 132, 0.2)',
+                fill: true
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false
+        }
+    });
+}
 
 function displayData(data) {
     const tableContainer = document.getElementById('table-container');
@@ -72,7 +144,6 @@ function displayData(data) {
     tableHTML += `</tbody></table>`;
     tableContainer.innerHTML = tableHTML;
 }
-
 
 function loadMap() {
     const map = L.map('map').setView([4.2105, 101.9758], 6);
