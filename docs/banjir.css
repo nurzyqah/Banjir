@@ -84,9 +84,9 @@ h1 {
   th, td {
       padding: 8px;
   }
-  
-  /* Add this to banjir.css */
-/* Apply border to the entire table */
+}
+
+/* Table styling */
 table {
   width: 100%;
   border-collapse: collapse; /* Ensures the borders are merged */
@@ -110,6 +110,4 @@ tr:nth-child(even) {
 
 tr:hover {
   background-color: #d0e4ff; /* Light blue highlight when row is hovered */
-}
-
 }
