@@ -60,9 +60,9 @@ function displayData(data) {
                 <td>${item.nama || 'N/A'}</td>
                 <td>${item.negeri || 'N/A'}</td>
                 <td>${item.daerah || 'N/A'}</td>
-                <td>${item.mangsa || 'N/A'}</td>
-                <td>${item.keluarga || 'N/A'}</td>
-                <td>${item.kapasiti || 'N/A'}</td>
+                <td>${item.mangsa || 0}</td>
+                <td>${item.keluarga || 0}</td>
+                <td>${item.kapasiti || 0}</td>
             </tr>
         `;
     });
@@ -82,13 +82,18 @@ function loadMap() {
 }
 
 function displayPieChart(data) {
-    if (!data || !data.ppsbuka) {
+    if (!data || !data.ppsbuka || data.ppsbuka.length === 0) {
         console.warn('No data available for pie chart');
         return;
     }
 
-    const totalMangsa = data.ppsbuka.reduce((acc, item) => acc + parseInt(item.mangsa, 10), 0);
-    const totalKeluarga = data.ppsbuka.reduce((acc, item) => acc + parseInt(item.keluarga, 10), 0);
+    const totalMangsa = data.ppsbuka.reduce((acc, item) => acc + (parseInt(item.mangsa, 10) || 0), 0);
+    const totalKeluarga = data.ppsbuka.reduce((acc, item) => acc + (parseInt(item.keluarga, 10) || 0), 0);
+
+    if (totalMangsa === 0 && totalKeluarga === 0) {
+        console.warn('No valid data for pie chart');
+        return;
+    }
 
     const ctx = document.getElementById('floodPieChart').getContext('2d');
     new Chart(ctx, {
@@ -101,7 +106,12 @@ function displayPieChart(data) {
             }]
         },
         options: {
-            responsive: true
+            responsive: true,
+            plugins: {
+                legend: {
+                    position: 'top',
+                },
+            },
         }
     });
 }
