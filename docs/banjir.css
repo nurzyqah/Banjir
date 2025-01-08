@@ -86,34 +86,30 @@ h1 {
   }
   
   /* Add this to banjir.css */
-table.formal-table {
+/* Apply border to the entire table */
+table {
   width: 100%;
-  border-collapse: collapse;
-  margin-top: 20px;
+  border-collapse: collapse; /* Ensures the borders are merged */
+  border: 2px solid #007bff; /* Adds a blue border around the entire table */
 }
 
-table.formal-table th, table.formal-table td {
-  border: 1px solid #ddd;
+th, td {
   padding: 12px;
   text-align: left;
+  border: 1px solid #007bff; /* Adds a blue border to each cell */
 }
 
-table.formal-table th {
-  background-color: #f2f2f2;
+th {
+  background-color: #e6f0ff; /* Light blue background for table headers */
   font-weight: bold;
-  color: #007bff;
 }
 
-table.formal-table tr:nth-child(even) {
-  background-color: #f9f9f9;
+tr:nth-child(even) {
+  background-color: #f2f9ff; /* Very light blue for alternating rows */
 }
 
-table.formal-table tr:hover {
-  background-color: #f1f1f1;
-}
-
-table.formal-table td {
-  font-size: 14px;
+tr:hover {
+  background-color: #d0e4ff; /* Light blue highlight when row is hovered */
 }
 
 }
