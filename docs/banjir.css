@@ -84,4 +84,36 @@ h1 {
   th, td {
       padding: 8px;
   }
+  '
+  /* Add this to banjir.css */
+table.formal-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 20px;
+}
+
+table.formal-table th, table.formal-table td {
+  border: 1px solid #ddd;
+  padding: 12px;
+  text-align: left;
+}
+
+table.formal-table th {
+  background-color: #f2f2f2;
+  font-weight: bold;
+  color: #007bff;
+}
+
+table.formal-table tr:nth-child(even) {
+  background-color: #f9f9f9;
+}
+
+table.formal-table tr:hover {
+  background-color: #f1f1f1;
+}
+
+table.formal-table td {
+  font-size: 14px;
+}
+'
 }
