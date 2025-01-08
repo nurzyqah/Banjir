@@ -114,9 +114,9 @@ tr:hover {
 
 /* Add size control for the pie chart */
 .chart-container {
-  width: 100%;
-  height: 100px; /* Set the height of the pie chart */
-  max-width: 200px; /* Limit maximum width */
+  width: 50%;
+  height: 50px; /* Set the height of the pie chart */
+  max-width: 50px; /* Limit maximum width */
   margin: 0 auto;
 }
 
