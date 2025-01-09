@@ -42,7 +42,7 @@ function loadAliranJumMangsa() {
         .then(data => {
             console.log('Aliran Jum Mangsa Data:', data);
             if (data && data.points) {
-                displayCategoryChart(data, 'Aliran Jum Mangsa');
+                displayBarChart(data, 'Aliran Jum Mangsa', 'barChart1');
             }
         })
         .catch(error => {
@@ -56,7 +56,7 @@ function loadAliranMasuk() {
         .then(data => {
             console.log('Aliran Masuk Data:', data);
             if (data && data.points) {
-                displayCategoryChart(data, 'Aliran Mangsa Masuk');
+                displayBarChart(data, 'Aliran Mangsa Masuk', 'barChart2');
             }
         })
         .catch(error => {
@@ -70,7 +70,7 @@ function loadAliranKeluar() {
         .then(data => {
             console.log('Aliran Keluar Data:', data);
             if (data && data.points) {
-                displayCategoryChart(data, 'Aliran Mangsa Keluar');
+                displayBarChart(data, 'Aliran Mangsa Keluar', 'barChart3');
             }
         })
         .catch(error => {
@@ -78,70 +78,33 @@ function loadAliranKeluar() {
         });
 }
 
-function displayCategoryChart(data, chartTitle, chartId) {
+function displayBarChart(data, chartTitle, chartId) {
     const ctx = document.getElementById(chartId).getContext('2d');
     const labels = data.points.map(item => item.date);  // Assuming date field is available
     const values = data.points.map(item => item.value);  // Adjust this depending on your response
 
     new Chart(ctx, {
-        type: 'line',
+        type: 'bar',
         data: {
             labels: labels,
             datasets: [{
                 label: chartTitle,
                 data: values,
+                backgroundColor: '#36A2EB',
                 borderColor: '#FF6384',
-                backgroundColor: 'rgba(255, 99, 132, 0.2)',
-                fill: true
+                borderWidth: 1
             }]
         },
         options: {
             responsive: true,
-            maintainAspectRatio: false
+            maintainAspectRatio: false,
+            scales: {
+                y: {
+                    beginAtZero: true
+                }
+            }
         }
     });
-}
-
-function loadAliranJumMangsa() {
-    fetch(aliranJumMangsaUrl)
-        .then(response => response.json())
-        .then(data => {
-            console.log('Aliran Jum Mangsa Data:', data);
-            if (data && data.points) {
-                displayCategoryChart(data, 'Aliran Jum Mangsa', 'categoryChart1');
-            }
-        })
-        .catch(error => {
-            console.error('Error loading Aliran Jum Mangsa data:', error.message);
-        });
-}
-
-function loadAliranMasuk() {
-    fetch(aliranMasukUrl)
-        .then(response => response.json())
-        .then(data => {
-            console.log('Aliran Masuk Data:', data);
-            if (data && data.points) {
-                displayCategoryChart(data, 'Aliran Mangsa Masuk', 'categoryChart2');
-            }
-        })
-        .catch(error => {
-            console.error('Error loading Aliran Mangsa Masuk data:', error.message);
-        });
-}
-
-function loadAliranKeluar() {
-    fetch(aliranKeluarUrl)
-        .then(response => response.json())
-        .then(data => {
-            console.log('Aliran Keluar Data:', data);
-            if (data && data.points) {
-                displayCategoryChart(data, 'Aliran Mangsa Keluar', 'categoryChart3');
-            }
-        })
-        .catch(error => {
-            console.error('Error loading Aliran Mangsa Keluar data:', error.message);
-        });
 }
 
 function displayData(data) {
