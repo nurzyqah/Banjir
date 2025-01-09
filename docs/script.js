@@ -41,9 +41,8 @@ function loadAliranData(url, chartTitle, chartId) {
         .then(response => response.json())
         .then(data => {
             console.log(`${chartTitle} Data:`, data);
-            if (data && data.contents) {
-                const jsonData = JSON.parse(data.contents);
-                displayCategoryChart(jsonData, chartTitle, chartId);
+            if (data && data.points) {
+                displayCategoryChart(data, chartTitle, chartId);
             }
         })
         .catch(error => {
@@ -53,15 +52,8 @@ function loadAliranData(url, chartTitle, chartId) {
 
 function displayCategoryChart(data, chartTitle, chartId) {
     const ctx = document.getElementById(chartId).getContext('2d');
-    
-    // Extracting the labels and values based on the new structure
-    const labels = data.tarikh; // Assuming 'tarikh' is the array of dates
-    const values = data.points || []; // Adjust this based on your actual data structure
-
-    // If the values are in a separate array, you may need to adjust how you access them. For example, if the values are in a separate array, you might need to map them accordingly.
-
-```javascript
-    const values = data.values || []; // Adjust this based on your actual data structure
+    const labels = data.points.map(item => item.date);  // Assuming date field is available
+    const values = data.points.map(item => item.value);  // Adjust this depending on your response
 
     new Chart(ctx, {
         type: 'line',
@@ -80,29 +72,6 @@ function displayCategoryChart(data, chartTitle, chartId) {
             maintainAspectRatio: false
         }
     });
-}
-
-function displayJumlahMangsa(data) {
-    const jumlahMangsaContainer = document.createElement('div');
-    jumlahMangsaContainer.className = 'card-body';
-    jumlahMangsaContainer.innerHTML = `
-        <div class="echart-bounce-rate" data-bs-a="0" data-bs-b="0" data-bs-seasonmain-id="209" data-bs-seasonnegeri-id="" data-echart-responsive="true">
-            <div style="position: relative; width: 589px; height: 320px; padding: 0px; margin: 0px; border-width: 0px; cursor: default;">
-                <canvas data-zr-dom-id="zr_0" width="736" height="400" style="position: absolute; left: 0px; top: 0px; width: 589px; height: 320px; user-select: none; -webkit-tap-highlight-color: rgba(0, 0, 0, 0); padding: 0px; margin: 0px; border-width: 0px;"></canvas>
-            </div>
-            <div class="" style="position: absolute; display: block; border-style: solid; white-space: nowrap; z-index: 9999999; box-shadow: rgba(0, 0, 0, 0.2) 1px 2px 10px; background-color: rgb(249, 250, 253); border-width: 1px; border-radius: 4px; color: rgb(11, 23, 39); font: 14px / 21px 'Microsoft YaHei'; padding: 7px 10px; top: 0px; left: 0px; transform: translate3d(161px, -26px, 0px); border-color: rgb(216, 226, 239); pointer-events: none; visibility: hidden; opacity: 0;">
-                <div>
-                    <p class="mb-0 text-600">29, December</p>
-                    <div class="d-flex align-items-center">
-                        <p class="mb-0 text-600">
-                            Jumlah Mangsa : <span class="text-800">${data.points.reduce((acc, item) => acc + parseInt(item.mangsa, 10), 0)}</span>
-                        </p>
-                    </div>
-                </div>
-            </div>
-        </div>
-    `;
-    document.getElementById('table-container').appendChild(jumlahMangsaContainer);
 }
 
 function displayData(data) {
@@ -127,7 +96,7 @@ function displayData(data) {
                     <th>Kapasiti</th>
                 </tr>
             </thead>
-            <tbody>
+ <tbody>
     `;
 
     data.points.forEach(item => {
@@ -148,8 +117,7 @@ function displayData(data) {
     tableContainer.innerHTML = tableHTML;
 }
 
-function loadMap ```javascript
-() {
+function loadMap() {
     const map = L.map('map').setView([4.2105, 101.9758], 6);
 
     L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
