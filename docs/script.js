@@ -43,6 +43,9 @@ function loadAliranData(url, chartTitle, chartId) {
             console.log(`${chartTitle} Data:`, data);
             if (data && data.points) {
                 displayCategoryChart(data, chartTitle, chartId);
+                if (chartTitle === 'Aliran Jum Mangsa') {
+                    displayJumlahMangsa(data);
+                }
             }
         })
         .catch(error => {
@@ -74,6 +77,29 @@ function displayCategoryChart(data, chartTitle, chartId) {
     });
 }
 
+function displayJumlahMangsa(data) {
+    const jumlahMangsaContainer = document.createElement('div');
+    jumlahMangsaContainer.className = 'card-body';
+    jumlahMangsaContainer.innerHTML = `
+        <div class="echart-bounce-rate" data-bs-a="0" data-bs-b="0" data-bs-seasonmain-id="209" data-bs-seasonnegeri-id="" data-echart-responsive="true">
+            <div style="position: relative; width:  589px; height: 320px; padding: 0px; margin: 0px; border-width: 0px; cursor: default;">
+                <canvas data-zr-dom-id="zr_0" width="736" height="400" style="position: absolute; left: 0px; top: 0px; width: 589px; height: 320px; user-select: none; -webkit-tap-highlight-color: rgba(0, 0, 0, 0); padding: 0px; margin: 0px; border-width: 0px;"></canvas>
+            </div>
+            <div class="" style="position: absolute; display: block; border-style: solid; white-space: nowrap; z-index: 9999999; box-shadow: rgba(0, 0, 0, 0.2) 1px 2px 10px; background-color: rgb(249, 250, 253); border-width: 1px; border-radius: 4px; color: rgb(11, 23, 39); font: 14px / 21px 'Microsoft YaHei'; padding: 7px 10px; top: 0px; left: 0px; transform: translate3d(161px, -26px, 0px); border-color: rgb(216, 226, 239); pointer-events: none; visibility: hidden; opacity: 0;">
+                <div>
+                    <p class="mb-0 text-600">29, December</p>
+                    <div class="d-flex align-items-center">
+                        <p class="mb-0 text-600">
+                            Jumlah Mangsa : <span class="text-800">${data.points.reduce((acc, item) => acc + parseInt(item.mangsa, 10), 0)}</span>
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    `;
+    document.getElementById('table-container').appendChild(jumlahMangsaContainer);
+}
+
 function displayData(data) {
     const tableContainer = document.getElementById('table-container');
     console.log('Displaying data:', data);
@@ -96,7 +122,7 @@ function displayData(data) {
                     <th>Kapasiti</th>
                 </tr>
             </thead>
- <tbody>
+            <tbody>
     `;
 
     data.points.forEach(item => {
@@ -143,7 +169,7 @@ function displayPieChart(data) {
             labels: ['Mangsa', 'Keluarga'],
             datasets: [{
                 data: [totalMangsa, totalKeluarga],
-                backgroundColor: ['#FF6384', '#36A2EB']
+ backgroundColor: ['#FF6384', '#36A2EB']
             }]
         },
         options: {
