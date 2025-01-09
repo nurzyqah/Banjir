@@ -31,50 +31,22 @@ document.addEventListener('DOMContentLoaded', () => {
         });
 
     loadMap();
-    loadAliranJumMangsa();  // Load Aliran Jum Mangsa data
-    loadAliranMasuk();       // Load Aliran Mangsa Masuk data
-    loadAliranKeluar();      // Load Aliran Mangsa Keluar data
+    loadAliranData(aliranJumMangsaUrl, 'Aliran Jum Mangsa', 'categoryChart1');
+    loadAliranData(aliranMasukUrl, 'Aliran Mangsa Masuk', 'categoryChart2');
+    loadAliranData(aliranKeluarUrl, 'Aliran Mangsa Keluar', 'categoryChart3');
 });
 
-function loadAliranJumMangsa() {
-    fetch(aliranJumMangsaUrl)
+function loadAliranData(url, chartTitle, chartId) {
+    fetch(url)
         .then(response => response.json())
         .then(data => {
-            console.log('Aliran Jum Mangsa Data:', data);
+            console.log(`${chartTitle} Data:`, data);
             if (data && data.points) {
-                displayCategoryChart(data, 'Aliran Jum Mangsa');
+                displayCategoryChart(data, chartTitle, chartId);
             }
         })
         .catch(error => {
-            console.error('Error loading Aliran Jum Mangsa data:', error.message);
-        });
-}
-
-function loadAliranMasuk() {
-    fetch(aliranMasukUrl)
-        .then(response => response.json())
-        .then(data => {
-            console.log('Aliran Masuk Data:', data);
-            if (data && data.points) {
-                displayCategoryChart(data, 'Aliran Mangsa Masuk');
-            }
-        })
-        .catch(error => {
-            console.error('Error loading Aliran Mangsa Masuk data:', error.message);
-        });
-}
-
-function loadAliranKeluar() {
-    fetch(aliranKeluarUrl)
-        .then(response => response.json())
-        .then(data => {
-            console.log('Aliran Keluar Data:', data);
-            if (data && data.points) {
-                displayCategoryChart(data, 'Aliran Mangsa Keluar');
-            }
-        })
-        .catch(error => {
-            console.error('Error loading Aliran Mangsa Keluar data:', error.message);
+            console.error(`Error loading ${chartTitle} data:`, error.message);
         });
 }
 
@@ -102,48 +74,6 @@ function displayCategoryChart(data, chartTitle, chartId) {
     });
 }
 
-function loadAliranJumMangsa() {
-    fetch(aliranJumMangsaUrl)
-        .then(response => response.json())
-        .then(data => {
-            console.log('Aliran Jum Mangsa Data:', data);
-            if (data && data.points) {
-                displayCategoryChart(data, 'Aliran Jum Mangsa', 'categoryChart1');
-            }
-        })
-        .catch(error => {
-            console.error('Error loading Aliran Jum Mangsa data:', error.message);
-        });
-}
-
-function loadAliranMasuk() {
-    fetch(aliranMasukUrl)
-        .then(response => response.json())
-        .then(data => {
-            console.log('Aliran Masuk Data:', data);
-            if (data && data.points) {
-                displayCategoryChart(data, 'Aliran Mangsa Masuk', 'categoryChart2');
-            }
-        })
-        .catch(error => {
-            console.error('Error loading Aliran Mangsa Masuk data:', error.message);
-        });
-}
-
-function loadAliranKeluar() {
-    fetch(aliranKeluarUrl)
-        .then(response => response.json())
-        .then(data => {
-            console.log('Aliran Keluar Data:', data);
-            if (data && data.points) {
-                displayCategoryChart(data, 'Aliran Mangsa Keluar', 'categoryChart3');
-            }
-        })
-        .catch(error => {
-            console.error('Error loading Aliran Mangsa Keluar data:', error.message);
-        });
-}
-
 function displayData(data) {
     const tableContainer = document.getElementById('table-container');
     console.log('Displaying data:', data);
@@ -166,7 +96,7 @@ function displayData(data) {
                     <th>Kapasiti</th>
                 </tr>
             </thead>
-            <tbody>
+ <tbody>
     `;
 
     data.points.forEach(item => {
