@@ -7,81 +7,81 @@ document.addEventListener('DOMContentLoaded', () => {
     const tableContainer = document.getElementById('table-container');
 
     fetch(apiUrl)
-        .then(response => response.json())
-        .then(data => {
-            console.log('Raw proxy data:', data);
-            if (data.contents) {
-                console.log('Contents:', data.contents);
-                try {
-                    const jsonData = JSON.parse(data.contents);
-                    displayData(jsonData);
-                    displayPieChart(jsonData);
-                } catch (error) {
-                    console.error('Error processing data:', error.message);
-                    tableContainer.innerHTML = `<p style="color: red;">Failed to process data: ${error.message}</p>`;
-                }
-            } else {
-                console.error('No contents in response');
-                tableContainer.innerHTML = `<p style="color: red;">Failed to process data: No contents received from API.</p>`;
+    .then(response => response.json())
+    .then(data => {
+        console.log('Raw proxy data:', data);
+        if (data.contents) {
+            console.log('Contents:', data.contents);
+            try {
+                const jsonData = JSON.parse(data.contents);
+                displayData(jsonData);
+                displayPieChart(jsonData);
+            } catch (error) {
+                console.error('Error processing data:', error.message);
+                tableContainer.innerHTML = `<p style="color: red;">Failed to process data: ${error.message}</p>`;
             }
-        })
-        .catch(error => {
-            console.error('Error loading data:', error.message);
-            tableContainer.innerHTML = `<p style="color: red;">Failed to load data: ${error.message}</p>`;
-        });
+        } else {
+            console.error('No contents in response');
+            tableContainer.innerHTML = `<p style="color: red;">Failed to process data: No contents received from API.</p>`;
+        }
+    })
+    .catch(error => {
+        console.error('Error loading data:', error.message);
+        tableContainer.innerHTML = `<p style="color: red;">Failed to load data: ${error.message}</p>`;
+    });
 
     loadMap();
-    loadAliranJumMangsa();  // Load Aliran Jum Mangsa data
-    loadAliranMasuk();       // Load Aliran Mangsa Masuk data
-    loadAliranKeluar();      // Load Aliran Mangsa Keluar data
+    loadAliranJumMangsa(); // Load Aliran Jum Mangsa data
+    loadAliranMasuk(); // Load Aliran Mangsa Masuk data
+    loadAliranKeluar(); // Load Aliran Mangsa Keluar data
 });
 
 function loadAliranJumMangsa() {
     fetch(aliranJumMangsaUrl)
-        .then(response => response.json())
-        .then(data => {
-            console.log('Aliran Jum Mangsa Data:', data);
-            if (data && data.points) {
-                displayCategoryChart(data, 'Aliran Jum Mangsa');
-            }
-        })
-        .catch(error => {
-            console.error('Error loading Aliran Jum Mangsa data:', error.message);
-        });
+    .then(response => response.json())
+    .then(data => {
+        console.log('Aliran Jum Mangsa Data:', data);
+        if (data && data.points) {
+            displayCategoryChart(data, 'Aliran Jum Mangsa', 'categoryChart1');
+        }
+    })
+    .catch(error => {
+        console.error('Error loading Aliran Jum Mangsa data:', error.message);
+    });
 }
 
 function loadAliranMasuk() {
     fetch(aliranMasukUrl)
-        .then(response => response.json())
-        .then(data => {
-            console.log('Aliran Masuk Data:', data);
-            if (data && data.points) {
-                displayCategoryChart(data, 'Aliran Mangsa Masuk');
-            }
-        })
-        .catch(error => {
-            console.error('Error loading Aliran Mangsa Masuk data:', error.message);
-        });
+    .then(response => response.json())
+    .then(data => {
+        console.log('Aliran Masuk Data:', data);
+        if (data && data.points) {
+            displayCategoryChart(data, 'Aliran Mangsa Masuk', 'categoryChart2');
+        }
+    })
+    .catch(error => {
+        console.error('Error loading Aliran Mangsa Masuk data:', error.message);
+    });
 }
 
 function loadAliranKeluar() {
     fetch(aliranKeluarUrl)
-        .then(response => response.json())
-        .then(data => {
-            console.log('Aliran Keluar Data:', data);
-            if (data && data.points) {
-                displayCategoryChart(data, 'Aliran Mangsa Keluar');
-            }
-        })
-        .catch(error => {
-            console.error('Error loading Aliran Mangsa Keluar data:', error.message);
-        });
+    .then(response => response.json())
+    .then(data => {
+        console.log('Aliran Keluar Data:', data);
+        if (data && data.points) {
+            displayCategoryChart(data, 'Aliran Mangsa Keluar', 'categoryChart3');
+        }
+    })
+    .catch(error => {
+        console.error('Error loading Aliran Mangsa Keluar data:', error.message);
+    });
 }
 
 function displayCategoryChart(data, chartTitle, chartId) {
     const ctx = document.getElementById(chartId).getContext('2d');
-    const labels = data.points.map(item => item.date);  // Assuming date field is available
-    const values = data.points.map(item => item.value);  // Adjust this depending on your response
+    const labels = data.points.map(item => item.date); // Assuming date field is available
+    const values = data.points.map(item => item.value); // Adjust this depending on your response
 
     new Chart(ctx, {
         type: 'line',
@@ -102,48 +102,6 @@ function displayCategoryChart(data, chartTitle, chartId) {
     });
 }
 
-function loadAliranJumMangsa() {
-    fetch(aliranJumMangsaUrl)
-        .then(response => response.json())
-        .then(data => {
-            console.log('Aliran Jum Mangsa Data:', data);
-            if (data && data.points) {
-                displayCategoryChart(data, 'Aliran Jum Mangsa', 'categoryChart1');
-            }
-        })
-        .catch(error => {
-            console.error('Error loading Aliran Jum Mangsa data:', error.message);
-        });
-}
-
-function loadAliranMasuk() {
-    fetch(aliranMasukUrl)
-        .then(response => response.json())
-        .then(data => {
-            console.log('Aliran Masuk Data:', data);
-            if (data && data.points) {
-                displayCategoryChart(data, 'Aliran Mangsa Masuk', 'categoryChart2');
-            }
-        })
-        .catch(error => {
-            console.error('Error loading Aliran Mangsa Masuk data:', error.message);
-        });
-}
-
-function loadAliranKeluar() {
-    fetch(aliranKeluarUrl)
-        .then(response => response.json())
-        .then(data => {
-            console.log('Aliran Keluar Data:', data);
-            if (data && data.points) {
-                displayCategoryChart(data, 'Aliran Mangsa Keluar', 'categoryChart3');
-            }
-        })
-        .catch(error => {
-            console.error('Error loading Aliran Mangsa Keluar data:', error.message);
-        });
-}
-
 function displayData(data) {
     const tableContainer = document.getElementById('table-container');
     console.log('Displaying data:', data);
@@ -154,20 +112,19 @@ function displayData(data) {
     }
 
     let tableHTML = `
-        <table class="formal-table">
-            <thead>
-                <tr>
-                    <th>Nama PPS</th>
-                    <th>Negeri</th>
-                    <th>Daerah</th>
-                    <th>Bencana</th>
-                    <th>Mangsa</th>
-                    <th>Keluarga</th>
-                    <th>Kapasiti</th>
-                </tr>
-            </thead>
-            <tbody>
-    `;
+    <table class="formal-table">
+        <thead>
+            <tr>
+                <th>Nama PPS</th>
+                <th>Negeri</th>
+                <th>Daerah</th>
+                <th>Bencana</th>
+                <th>Mangsa</th>
+                <th>Keluarga</th>
+                <th>Kapasiti</th>
+            </tr>
+        </thead>
+    <tbody>`;
 
     data.points.forEach(item => {
         tableHTML += `
@@ -217,9 +174,9 @@ function displayPieChart(data) {
             }]
         },
         options: {
-            responsive: false,  // Disable responsive behavior
-            maintainAspectRatio: false,  // Allow custom aspect ratio
-            width: 250,  // Set fixed width
+            responsive: false, // Disable responsive behavior
+            maintainAspectRatio: false, // Allow custom aspect ratio
+            width: 250, // Set fixed width
             height: 250, // Set fixed height
             plugins: {
                 legend: {
