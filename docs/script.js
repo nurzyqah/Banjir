@@ -97,9 +97,6 @@ function loadChart(url, title, chartId) {
       const labels = data.points.map((item) => item.date || "Unknown");
       const values = data.points.map((item) => item.value || 0);
 
-      console.log('Labels:', labels); // Debugging log
-      console.log('Values:', values); // Debugging log
-
       const ctx = document.getElementById(chartId).getContext("2d");
       new Chart(ctx, {
         type: "line",
@@ -120,20 +117,91 @@ function loadChart(url, title, chartId) {
           maintainAspectRatio: false,
         },
       });
-    } else {
-      console.error('No data points available for chart:', title);
     }
   });
 }
 
 function displayBarChart(data, containerId) {
-  // Implement your bar chart logic here
+  if (!data.points) return;
+
+  const labels = data.points.map((item) => item.negeri || "Unknown");
+  const values = data.points.map((item) => parseInt(item.mangsa, 10) || 0);
+
+  const ctx = document.getElementById(containerId).getContext("2d");
+  new Chart(ctx, {
+    type: "bar",
+    data: {
+      labels: labels,
+      datasets: [
+        {
+          label: "Jumlah Mangsa",
+          data: values,
+          backgroundColor: "rgba(54, 162, 235, 0.6)",
+          borderColor: "rgba(54, 162, 235, 1)",
+          borderWidth: 1,
+        },
+      ],
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      scales: {
+        y: {
+          beginAtZero: true,
+        },
+      },
+      plugins: {
+        legend: {
+          display: true,
+          position: "top",
+        },
+      },
+    },
+  });
 }
 
 function displayPieChart(data, containerId) {
-  // Implement your pie chart logic here
+  if (!data.points) return;
+
+  const totalMangsa = data.points.reduce(
+    (acc, item) => acc + parseInt(item.mangsa, 10),
+    0
+  );
+  const totalKeluarga = data.points.reduce(
+    (acc, item) => acc + parseInt(item.keluarga, 10),
+    0
+  );
+
+  const ctx = document.getElementById(containerId).getContext("2d");
+  new Chart(ctx, {
+    type: "pie",
+    data: {
+      labels: ["Mangsa", "Keluarga"],
+      datasets: [
+        {
+          data: [totalMangsa, totalKeluarga],
+          backgroundColor: ["#FF6384", "#36A2EB"],
+        },
+      ],
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      plugins: {
+        legend: {
+          position: "top",
+        },
+      },
+    },
+  });
 }
 
 function initMap() {
-  // Implement your map initialization logic here
+  const map = L.map("map").setView([4.2105, 101.9758], 6);
+
+  L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
+    attribution: "&copy; OpenStreetMap contributors",
+  }).addTo(map);
+
+  // Add more map features or data points as needed
 }
