@@ -5,130 +5,77 @@ const aliranMasukUrl = 'https://api.allorigins.win/get?url=' + encodeURIComponen
 const aliranKeluarUrl = 'https://api.allorigins.win/get?url=' + encodeURIComponent('https://infobencanajkmv2.jkm.gov.my/api/data-dashboard-aliran-trend-balik.php?a=0&b=0&seasonmain_id=209&seasonnegeri_id=');
 
 document.addEventListener('DOMContentLoaded', () => {
-    const tableContainer = document.getElementById('table-container');
-
-    fetch(apiUrl)
-        .then(response => response.json())
-        .then(data => {
-            if (data.contents) {
-                const jsonData = JSON.parse(data.contents);
-                displayData(jsonData);
-                displayPieChart(jsonData);
-            } else {
-                throw new Error('No contents in response');
-            }
-        })
-        .catch(error => {
-            console.error('Error loading data:', error.message);
-            tableContainer.innerHTML = `<p style="color: red;">Failed to load data: ${error.message}</p>`;
-        });
-
+    fetchData(apiUrl, displayData);
     loadMap();
-    loadAliranJumMangsa();
-    loadAliranMasuk();
-    loadAliranKeluar();
-    loadBarChart();
+    loadChartData(aliranJumMangsaUrl, 'Aliran Jum Mangsa', 'categoryChart1');
+    loadChartData(aliranMasukUrl, 'Aliran Mangsa Masuk', 'categoryChart2');
+    loadChartData(aliranKeluarUrl, 'Aliran Mangsa Keluar', 'categoryChart3');
+    loadBarChart(apiUrl);
 });
 
-function loadAliranJumMangsa() {
-    fetch(aliranJumMangsaUrl)
+function fetchData(url, callback) {
+    fetch(url)
         .then(response => response.json())
         .then(data => {
             if (data.contents) {
                 const jsonData = JSON.parse(data.contents);
-                displayCategoryChart(jsonData, 'Aliran Jum Mangsa', 'categoryChart1');
+                callback(jsonData);
             } else {
                 throw new Error('No contents in response');
             }
         })
         .catch(error => {
-            console.error('Error loading Aliran Jum Mangsa data:', error.message);
+            console.error(`Error loading data from ${url}:`, error.message);
+            const tableContainer = document.getElementById('table-container');
+            tableContainer.innerHTML = `<p style="color: red;">Failed to load data: ${error.message}</p>`;
         });
 }
 
-function loadAliranMasuk() {
-    fetch(aliranMasukUrl)
-        .then(response => response.json())
-        .then(data => {
-            if (data.contents) {
-                const jsonData = JSON.parse(data.contents);
-                displayCategoryChart(jsonData, 'Aliran Mangsa Masuk', 'categoryChart2');
-            } else {
-                throw new Error('No contents in response');
-            }
-        })
-        .catch(error => {
-            console.error('Error loading Aliran Mangsa Masuk data:', error.message);
-        });
+function loadChartData(url, chartTitle, chartId) {
+    fetchData(url, jsonData => displayCategoryChart(jsonData, chartTitle, chartId));
 }
 
-function loadAliranKeluar() {
-    fetch(aliranKeluarUrl)
-        .then(response => response.json())
-        .then(data => {
-            if (data.contents) {
-                const jsonData = JSON.parse(data.contents);
-                displayCategoryChart(jsonData, 'Aliran Mangsa Keluar', 'categoryChart3');
-            } else {
-                throw new Error('No contents in response');
-            }
-        })
-        .catch(error => {
-            console.error('Error loading Aliran Mangsa Keluar data:', error.message);
-        });
-}
+function loadBarChart(url) {
+    fetchData(url, jsonData => {
+        const labels = jsonData.points.map(item => item.negeri || 'Unknown');
+        const values = jsonData.points.map(item => parseInt(item.mangsa, 10) || 0);
 
-function loadBarChart() {
-    fetch(apiUrl)
-        .then(response => response.json())
-        .then(data => {
-            if (data.contents) {
-                const jsonData = JSON.parse(data.contents);
-                const labels = jsonData.points.map(item => item.negeri || 'Unknown');
-                const values = jsonData.points.map(item => parseInt(item.mangsa, 10) || 0);
-
-                const ctx = document.getElementById('barChart').getContext('2d');
-                new Chart(ctx, {
-                    type: 'bar',
-                    data: {
-                        labels: labels,
-                        datasets: [{
-                            label: 'Jumlah Mangsa',
-                            data: values,
-                            backgroundColor: 'rgba(54, 162, 235, 0.6)',
-                            borderColor: 'rgba(54, 162, 235, 1)',
-                            borderWidth: 1
-                        }]
-                    },
-                    options: {
-                        responsive: true,
-                        maintainAspectRatio: false,
-                        scales: {
-                            y: {
-                                beginAtZero: true
-                            }
-                        },
-                        plugins: {
-                            legend: {
-                                display: true,
-                                position: 'top'
-                            }
-                        }
+        const ctx = document.getElementById('barChart').getContext('2d');
+        new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: labels,
+                datasets: [{
+                    label: 'Jumlah Mangsa',
+                    data: values,
+                    backgroundColor: 'rgba(54, 162, 235, 0.6)',
+                    borderColor: 'rgba(54, 162, 235, 1)',
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: {
+                    y: {
+                        beginAtZero: true
                     }
-                });
-            } else {
-                throw new Error('No contents in response');
+                },
+                plugins: {
+                    legend: {
+                        display: true,
+                        position: 'top'
+                    }
+                }
             }
-        })
-        .catch(error => {
-            console.error('Error loading bar chart data:', error.message);
         });
+    });
 }
 
 function displayCategoryChart(data, chartTitle, chartId) {
     const ctx = document.getElementById(chartId).getContext('2d');
-    const labels = data.points.map(item => item.date); // Assuming date field is available
-    const values = data.points.map(item => item.value); // Adjust this depending on your response
+    const labels = data.points.map(item => item.date || 'Unknown');
+    const values = data.points.map(item => item.value || 0);
 
     new Chart(ctx, {
         type: 'line',
@@ -151,7 +98,6 @@ function displayCategoryChart(data, chartTitle, chartId) {
 
 function displayData(data) {
     const tableContainer = document.getElementById('table-container');
-
     if (!data || !data.points || data.points.length === 0) {
         tableContainer.innerHTML = '<p>No data available.</p>';
         return;
@@ -182,8 +128,7 @@ function displayData(data) {
                 <td>${item.mangsa || 'N/A'}</td>
                 <td>${item.keluarga || 'N/A'}</td>
                 <td>${item.kapasiti || 'N/A'}</td>
-            </tr>
-        `;
+            </tr>`;
     });
 
     tableHTML += `</tbody></table>`;
@@ -197,7 +142,7 @@ function loadMap() {
         attribution: '&copy; OpenStreetMap contributors',
     }).addTo(map);
 
-    // Add more map features or data points as needed
+    // Additional map features or data points can be added here
 }
 
 function displayPieChart(data) {
