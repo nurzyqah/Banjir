@@ -5,77 +5,125 @@ const aliranMasukUrl = 'https://api.allorigins.win/get?url=' + encodeURIComponen
 const aliranKeluarUrl = 'https://api.allorigins.win/get?url=' + encodeURIComponent('https://infobencanajkmv2.jkm.gov.my/api/data-dashboard-aliran-trend-balik.php?a=0&b=0&seasonmain_id=209&seasonnegeri_id=');
 
 document.addEventListener('DOMContentLoaded', () => {
-    fetchData(apiUrl, displayData);
-    loadMap();
-    loadChartData(aliranJumMangsaUrl, 'Aliran Jum Mangsa', 'categoryChart1');
-    loadChartData(aliranMasukUrl, 'Aliran Mangsa Masuk', 'categoryChart2');
-    loadChartData(aliranKeluarUrl, 'Aliran Mangsa Keluar', 'categoryChart3');
-    loadBarChart(apiUrl);
-});
+    const tableContainer = document.getElementById('table-container');
 
-function fetchData(url, callback) {
-    fetch(url)
+    fetch(apiUrl)
         .then(response => response.json())
         .then(data => {
+            console.log('Raw proxy data:', data);
             if (data.contents) {
                 const jsonData = JSON.parse(data.contents);
-                callback(jsonData);
-            } else {
-                throw new Error('No contents in response');
+                displayData(jsonData);
+                displayPieChart(jsonData);
             }
         })
         .catch(error => {
-            console.error(`Error loading data from ${url}:`, error.message);
-            const tableContainer = document.getElementById('table-container');
-            tableContainer.innerHTML = `<p style="color: red;">Failed to load data: ${error.message}</p>`;
+            console.error('Error loading data:', error.message);
+            tableContainer.innerHTML = <p style="color: red;">Failed to load data: ${error.message}</p>;
         });
-}
 
-function loadChartData(url, chartTitle, chartId) {
-    fetchData(url, jsonData => displayCategoryChart(jsonData, chartTitle, chartId));
-}
+    loadMap();
+    loadAliranJumMangsa(); // Load Aliran Jum Mangsa data
+    loadAliranMasuk(); // Load Aliran Mangsa Masuk data
+    loadAliranKeluar(); // Load Aliran Mangsa Keluar data
+    loadBarChart(); // Load bar chart data
+});
 
-function loadBarChart(url) {
-    fetchData(url, jsonData => {
-        const labels = jsonData.points.map(item => item.negeri || 'Unknown');
-        const values = jsonData.points.map(item => parseInt(item.mangsa, 10) || 0);
-
-        const ctx = document.getElementById('barChart').getContext('2d');
-        new Chart(ctx, {
-            type: 'bar',
-            data: {
-                labels: labels,
-                datasets: [{
-                    label: 'Jumlah Mangsa',
-                    data: values,
-                    backgroundColor: 'rgba(54, 162, 235, 0.6)',
-                    borderColor: 'rgba(54, 162, 235, 1)',
-                    borderWidth: 1
-                }]
-            },
-            options: {
-                responsive: true,
-                maintainAspectRatio: false,
-                scales: {
-                    y: {
-                        beginAtZero: true
-                    }
-                },
-                plugins: {
-                    legend: {
-                        display: true,
-                        position: 'top'
-                    }
-                }
+function loadAliranJumMangsa() {
+    fetch(aliranJumMangsaUrl)
+        .then(response => response.json())
+        .then(data => {
+            console.log('Aliran Jum Mangsa Data:', data);
+            if (data && data.points) {
+                displayCategoryChart(data, 'Aliran Jum Mangsa', 'categoryChart1');
             }
+        })
+        .catch(error => {
+            console.error('Error loading Aliran Jum Mangsa data:', error.message);
         });
-    });
+}
+
+function loadAliranMasuk() {
+    fetch(aliranMasukUrl)
+        .then(response => response.json())
+        .then(data => {
+            console.log('Aliran Masuk Data:', data);
+            if (data && data.points) {
+                displayCategoryChart(data, 'Aliran Mangsa Masuk', 'categoryChart2');
+            }
+        })
+        .catch(error => {
+            console.error('Error loading Aliran Mangsa Masuk data:', error.message);
+        });
+}
+
+function loadAliranKeluar() {
+    fetch(aliranKeluarUrl)
+        .then(response => response.json())
+        .then(data => {
+            console.log('Aliran Keluar Data:', data);
+            if (data && data.points) {
+                displayCategoryChart(data, 'Aliran Mangsa Keluar', 'categoryChart3');
+            }
+        })
+        .catch(error => {
+            console.error('Error loading Aliran Mangsa Keluar data:', error.message);
+        });
+}
+
+function loadBarChart() {
+    fetch(apiUrl)
+        .then(response => response.json())
+        .then(data => {
+            console.log('Bar Chart Data:', data);
+            if (data.contents) {
+                const jsonData = JSON.parse(data.contents);
+
+                // Prepare data for bar chart
+                const labels = jsonData.points.map(item => item.negeri || 'Unknown');
+                const values = jsonData.points.map(item => parseInt(item.mangsa, 10) || 0);
+
+                // Display the bar chart
+                const ctx = document.getElementById('barChart').getContext('2d');
+                new Chart(ctx, {
+                    type: 'bar',
+                    data: {
+                        labels: labels,
+                        datasets: [{
+                            label: 'Jumlah Mangsa',
+                            data: values,
+                            backgroundColor: 'rgba(54, 162, 235, 0.6)',
+                            borderColor: 'rgba(54, 162, 235, 1)',
+                            borderWidth: 1
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        scales: {
+                            y: {
+                                beginAtZero: true
+                            }
+                        },
+                        plugins: {
+                            legend: {
+                                display: true,
+                                position: 'top'
+                            }
+                        }
+                    }
+                });
+            }
+        })
+        .catch(error => {
+            console.error('Error loading bar chart data:', error.message);
+        });
 }
 
 function displayCategoryChart(data, chartTitle, chartId) {
     const ctx = document.getElementById(chartId).getContext('2d');
-    const labels = data.points.map(item => item.date || 'Unknown');
-    const values = data.points.map(item => item.value || 0);
+    const labels = data.points.map(item => item.date); // Assuming date field is available
+    const values = data.points.map(item => item.value); // Adjust this depending on your response
 
     new Chart(ctx, {
         type: 'line',
@@ -98,6 +146,8 @@ function displayCategoryChart(data, chartTitle, chartId) {
 
 function displayData(data) {
     const tableContainer = document.getElementById('table-container');
+    console.log('Displaying data:', data);
+
     if (!data || !data.points || data.points.length === 0) {
         tableContainer.innerHTML = '<p>No data available.</p>';
         return;
@@ -116,7 +166,7 @@ function displayData(data) {
                 <th>Kapasiti</th>
             </tr>
         </thead>
-        <tbody>`;
+    <tbody>`;
 
     data.points.forEach(item => {
         tableHTML += `
@@ -128,10 +178,11 @@ function displayData(data) {
                 <td>${item.mangsa || 'N/A'}</td>
                 <td>${item.keluarga || 'N/A'}</td>
                 <td>${item.kapasiti || 'N/A'}</td>
-            </tr>`;
+            </tr>
+        `;
     });
 
-    tableHTML += `</tbody></table>`;
+    tableHTML += </tbody></table>;
     tableContainer.innerHTML = tableHTML;
 }
 
@@ -142,7 +193,7 @@ function loadMap() {
         attribution: '&copy; OpenStreetMap contributors',
     }).addTo(map);
 
-    // Additional map features or data points can be added here
+    // Add more map features or data points as needed
 }
 
 function displayPieChart(data) {
@@ -154,20 +205,24 @@ function displayPieChart(data) {
     const totalMangsa = data.points.reduce((acc, item) => acc + parseInt(item.mangsa, 10), 0);
     const totalKeluarga = data.points.reduce((acc, item) => acc + parseInt(item.keluarga, 10), 0);
 
-    const ctx = document.getElementById('pieChart').getContext('2d');
+    const ctx = document.getElementById('floodPieChart').getContext('2d');
     new Chart(ctx, {
         type: 'pie',
         data: {
-            labels: ['Total Mangsa', 'Total Keluarga'],
+            labels: ['Mangsa', 'Keluarga'],
             datasets: [{
                 data: [totalMangsa, totalKeluarga],
-                backgroundColor: ['#FF6384', '#36A2EB'],
-                hoverBackgroundColor: ['#FF6384', '#36A2EB']
+                backgroundColor: ['#FF6384', '#36A2EB']
             }]
         },
         options: {
-            responsive: true,
-            maintainAspectRatio: false
+            responsive: false, // Disable responsive behavior
+            maintainAspectRatio: false, // Allow custom aspect ratio
+            plugins: {
+                legend: {
+                    position: 'top'
+                }
+            }
         }
     });
 }
