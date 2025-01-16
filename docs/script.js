@@ -8,18 +8,13 @@ document.addEventListener('DOMContentLoaded', () => {
     const tableContainer = document.getElementById('table-container');
 
     fetch(apiUrl)
-        .then(response => response.json())  // Ensure the response is treated as JSON
+        .then(response => response.json())
         .then(data => {
-            console.log('Raw API data:', data);  // Log the raw data for debugging
+            console.log('Raw proxy data:', data);
             if (data.contents) {
-                try {
-                    const jsonData = JSON.parse(data.contents);  // Parse the JSON string properly
-                    displayData(jsonData);
-                    displayPieChart(jsonData);
-                } catch (error) {
-                    console.error('Error parsing JSON:', error);
-                    tableContainer.innerHTML = `<p style="color: red;">Error parsing JSON: ${error.message}</p>`;
-                }
+                const jsonData = JSON.parse(data.contents);
+                displayData(jsonData);
+                displayPieChart(jsonData);
             }
         })
         .catch(error => {
@@ -34,7 +29,6 @@ document.addEventListener('DOMContentLoaded', () => {
     loadBarChart(); // Load bar chart data
 });
 
-// Load the Aliran Jum Mangsa data
 function loadAliranJumMangsa() {
     fetch(aliranJumMangsaUrl)
         .then(response => response.json())
@@ -49,7 +43,6 @@ function loadAliranJumMangsa() {
         });
 }
 
-// Load Aliran Masuk data
 function loadAliranMasuk() {
     fetch(aliranMasukUrl)
         .then(response => response.json())
@@ -64,7 +57,6 @@ function loadAliranMasuk() {
         });
 }
 
-// Load Aliran Keluar data
 function loadAliranKeluar() {
     fetch(aliranKeluarUrl)
         .then(response => response.json())
@@ -79,7 +71,6 @@ function loadAliranKeluar() {
         });
 }
 
-// Load Bar Chart data
 function loadBarChart() {
     fetch(apiUrl)
         .then(response => response.json())
@@ -129,7 +120,6 @@ function loadBarChart() {
         });
 }
 
-// Display Category Chart
 function displayCategoryChart(data, chartTitle, chartId) {
     const ctx = document.getElementById(chartId).getContext('2d');
     const labels = data.points.map(item => item.date); // Assuming date field is available
@@ -154,7 +144,6 @@ function displayCategoryChart(data, chartTitle, chartId) {
     });
 }
 
-// Display Data in Table
 function displayData(data) {
     const tableContainer = document.getElementById('table-container');
     console.log('Displaying data:', data);
@@ -197,16 +186,16 @@ function displayData(data) {
     tableContainer.innerHTML = tableHTML;
 }
 
-// Load the Map (Placeholder)
 function loadMap() {
     const map = L.map('map').setView([4.2105, 101.9758], 6);
 
     L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
         attribution: '&copy; OpenStreetMap contributors',
     }).addTo(map);
+
+    // Add more map features or data points as needed
 }
 
-// Display Pie Chart
 function displayPieChart(data) {
     if (!data || !data.points) {
         console.warn('No data available for pie chart');
