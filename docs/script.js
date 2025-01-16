@@ -10,32 +10,35 @@ document.addEventListener('DOMContentLoaded', () => {
     fetch(apiUrl)
         .then(response => response.json())
         .then(data => {
-            console.log('Raw proxy data:', data);
             if (data.contents) {
                 const jsonData = JSON.parse(data.contents);
                 displayData(jsonData);
                 displayPieChart(jsonData);
+            } else {
+                throw new Error('No contents in response');
             }
         })
         .catch(error => {
             console.error('Error loading data:', error.message);
-            tableContainer.innerHTML = <p style="color: red;">Failed to load data: ${error.message}</p>;
+            tableContainer.innerHTML = `<p style="color: red;">Failed to load data: ${error.message}</p>`;
         });
 
     loadMap();
-    loadAliranJumMangsa(); // Load Aliran Jum Mangsa data
-    loadAliranMasuk(); // Load Aliran Mangsa Masuk data
-    loadAliranKeluar(); // Load Aliran Mangsa Keluar data
-    loadBarChart(); // Load bar chart data
+    loadAliranJumMangsa();
+    loadAliranMasuk();
+    loadAliranKeluar();
+    loadBarChart();
 });
 
 function loadAliranJumMangsa() {
     fetch(aliranJumMangsaUrl)
         .then(response => response.json())
         .then(data => {
-            console.log('Aliran Jum Mangsa Data:', data);
-            if (data && data.points) {
-                displayCategoryChart(data, 'Aliran Jum Mangsa', 'categoryChart1');
+            if (data.contents) {
+                const jsonData = JSON.parse(data.contents);
+                displayCategoryChart(jsonData, 'Aliran Jum Mangsa', 'categoryChart1');
+            } else {
+                throw new Error('No contents in response');
             }
         })
         .catch(error => {
@@ -47,9 +50,11 @@ function loadAliranMasuk() {
     fetch(aliranMasukUrl)
         .then(response => response.json())
         .then(data => {
-            console.log('Aliran Masuk Data:', data);
-            if (data && data.points) {
-                displayCategoryChart(data, 'Aliran Mangsa Masuk', 'categoryChart2');
+            if (data.contents) {
+                const jsonData = JSON.parse(data.contents);
+                displayCategoryChart(jsonData, 'Aliran Mangsa Masuk', 'categoryChart2');
+            } else {
+                throw new Error('No contents in response');
             }
         })
         .catch(error => {
@@ -61,9 +66,11 @@ function loadAliranKeluar() {
     fetch(aliranKeluarUrl)
         .then(response => response.json())
         .then(data => {
-            console.log('Aliran Keluar Data:', data);
-            if (data && data.points) {
-                displayCategoryChart(data, 'Aliran Mangsa Keluar', 'categoryChart3');
+            if (data.contents) {
+                const jsonData = JSON.parse(data.contents);
+                displayCategoryChart(jsonData, 'Aliran Mangsa Keluar', 'categoryChart3');
+            } else {
+                throw new Error('No contents in response');
             }
         })
         .catch(error => {
@@ -75,15 +82,11 @@ function loadBarChart() {
     fetch(apiUrl)
         .then(response => response.json())
         .then(data => {
-            console.log('Bar Chart Data:', data);
             if (data.contents) {
                 const jsonData = JSON.parse(data.contents);
-
-                // Prepare data for bar chart
                 const labels = jsonData.points.map(item => item.negeri || 'Unknown');
                 const values = jsonData.points.map(item => parseInt(item.mangsa, 10) || 0);
 
-                // Display the bar chart
                 const ctx = document.getElementById('barChart').getContext('2d');
                 new Chart(ctx, {
                     type: 'bar',
@@ -113,6 +116,8 @@ function loadBarChart() {
                         }
                     }
                 });
+            } else {
+                throw new Error('No contents in response');
             }
         })
         .catch(error => {
@@ -146,7 +151,6 @@ function displayCategoryChart(data, chartTitle, chartId) {
 
 function displayData(data) {
     const tableContainer = document.getElementById('table-container');
-    console.log('Displaying data:', data);
 
     if (!data || !data.points || data.points.length === 0) {
         tableContainer.innerHTML = '<p>No data available.</p>';
@@ -166,7 +170,7 @@ function displayData(data) {
                 <th>Kapasiti</th>
             </tr>
         </thead>
-    <tbody>`;
+        <tbody>`;
 
     data.points.forEach(item => {
         tableHTML += `
@@ -182,7 +186,7 @@ function displayData(data) {
         `;
     });
 
-    tableHTML += </tbody></table>;
+    tableHTML += `</tbody></table>`;
     tableContainer.innerHTML = tableHTML;
 }
 
@@ -205,24 +209,20 @@ function displayPieChart(data) {
     const totalMangsa = data.points.reduce((acc, item) => acc + parseInt(item.mangsa, 10), 0);
     const totalKeluarga = data.points.reduce((acc, item) => acc + parseInt(item.keluarga, 10), 0);
 
-    const ctx = document.getElementById('floodPieChart').getContext('2d');
+    const ctx = document.getElementById('pieChart').getContext('2d');
     new Chart(ctx, {
         type: 'pie',
         data: {
-            labels: ['Mangsa', 'Keluarga'],
+            labels: ['Total Mangsa', 'Total Keluarga'],
             datasets: [{
                 data: [totalMangsa, totalKeluarga],
-                backgroundColor: ['#FF6384', '#36A2EB']
+                backgroundColor: ['#FF6384', '#36A2EB'],
+                hoverBackgroundColor: ['#FF6384', '#36A2EB']
             }]
         },
         options: {
-            responsive: false, // Disable responsive behavior
-            maintainAspectRatio: false, // Allow custom aspect ratio
-            plugins: {
-                legend: {
-                    position: 'top'
-                }
-            }
+            responsive: true,
+            maintainAspectRatio: false
         }
     });
 }
