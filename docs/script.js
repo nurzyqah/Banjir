@@ -301,44 +301,44 @@ function displayPieChart(data) {
         }
     });
 
-    new Chart(ctx, {
-        type: 'line',
-        data: {
-            labels: data.points.map(item => item.date), // x-axis
-            datasets: [{
-                label: 'Aliran Jum Mangsa',
-                data: data.points.map(item => item.value), // y-axis
-                borderColor: '#007bff',
-                backgroundColor: 'rgba(0, 123, 255, 0.2)',
-                fill: true,
-                tension: 0.4 // Smooth line
-            }]
-        },
-        options: {
-            responsive: true,
-            maintainAspectRatio: false,
-            scales: {
-                y: {
-                    title: {
-                        display: true,
-                        text: 'Mangsa'
-                    },
-                    beginAtZero: true
-                },
-                x: {
-                    title: {
-                        display: true,
-                        text: 'Dates'
-                    }
-                }
-            },
-            plugins: {
-                legend: {
+new Chart(ctx, {
+    type: 'line',
+    data: {
+        labels: data.points.map(item => item.date), // x-axis
+        datasets: [{
+            label: 'Aliran Jum Mangsa',
+            data: data.points.map(item => item.value), // y-axis
+            borderColor: '#007bff',
+            backgroundColor: 'rgba(0, 123, 255, 0.2)',
+            fill: true,
+            tension: 0.4 // Smooth line
+        }]
+    },
+    options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        scales: {
+            y: {
+                title: {
                     display: true,
-                    position: 'top'
+                    text: 'Mangsa'
+                },
+                beginAtZero: true
+            },
+            x: {
+                title: {
+                    display: true,
+                    text: 'Dates'
                 }
             }
+        },
+        plugins: {
+            legend: {
+                display: true,
+                position: 'top'
+            }
         }
-    });
-    
+    }
+});
+
 }
