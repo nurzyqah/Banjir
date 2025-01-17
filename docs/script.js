@@ -19,7 +19,7 @@ document.addEventListener('DOMContentLoaded', () => {
         })
         .catch(error => {
             console.error('Error loading data:', error.message);
-            tableContainer.innerHTML = `<p style="color: red;">Failed to load data: ${error.message}</p>`;
+            tableContainer.innerHTML = <p style="color: red;">Failed to load data: ${error.message}</p>;
         });
 
     loadMap();
@@ -257,7 +257,7 @@ function displayData(data) {
         `;
     });
 
-    tableHTML += `</tbody></table>`;
+    tableHTML += </tbody></table>;
     tableContainer.innerHTML = tableHTML;
 }
 
