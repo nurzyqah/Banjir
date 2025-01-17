@@ -19,7 +19,7 @@ document.addEventListener('DOMContentLoaded', () => {
         })
         .catch(error => {
             console.error('Error loading data:', error.message);
-            tableContainer.innerHTML = <p style="color: red;">Failed to load data: ${error.message}</p>;
+            tableContainer.innerHTML = `<p style="color: red;">Failed to load data: ${error.message}</p>`;
         });
 
     loadMap();
@@ -36,6 +36,7 @@ function loadAliranJumMangsa() {
             console.log('Aliran Jum Mangsa Data:', data);
             if (data && data.points) {
                 displayCategoryChart(data, 'Aliran Jum Mangsa', 'categoryChart1');
+                loadBarChartForAliranJumMangsa(data);
             }
         })
         .catch(error => {
@@ -50,6 +51,7 @@ function loadAliranMasuk() {
             console.log('Aliran Masuk Data:', data);
             if (data && data.points) {
                 displayCategoryChart(data, 'Aliran Mangsa Masuk', 'categoryChart2');
+                loadBarChartForAliranMasuk(data);
             }
         })
         .catch(error => {
@@ -64,6 +66,7 @@ function loadAliranKeluar() {
             console.log('Aliran Keluar Data:', data);
             if (data && data.points) {
                 displayCategoryChart(data, 'Aliran Mangsa Keluar', 'categoryChart3');
+                loadBarChartForAliranKeluar(data);
             }
         })
         .catch(error => {
@@ -118,6 +121,78 @@ function loadBarChart() {
         .catch(error => {
             console.error('Error loading bar chart data:', error.message);
         });
+}
+
+function loadBarChartForAliranJumMangsa(data) {
+    const ctx = document.getElementById('barChart1').getContext('2d');
+    const labels = data.points.map(item => item.date); // Assuming date field is available
+    const values = data.points.map(item => item.value); // Adjust this depending on your response
+
+    new Chart(ctx, {
+        type: 'bar',
+        data: {
+            labels: labels,
+            datasets: [{
+                label: 'Aliran Jum Mangsa',
+                data: values,
+                backgroundColor: 'rgba(255, 99, 132, 0.6)',
+                borderColor: 'rgba(255, 99, 132, 1)',
+                borderWidth: 1
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false
+        }
+    });
+}
+
+function loadBarChartForAliranMasuk(data) {
+    const ctx = document.getElementById('barChart2').getContext('2d');
+    const labels = data.points.map(item => item.date); // Assuming date field is available
+    const values = data.points.map(item => item.value); // Adjust this depending on your response
+
+    new Chart(ctx, {
+        type: 'bar',
+        data: {
+            labels: labels,
+            datasets: [{
+                label: 'Aliran Mangsa Masuk',
+                data: values,
+                backgroundColor: 'rgba(54, 162, 235, 0.6)',
+                borderColor: 'rgba(54, 162, 235, 1)',
+                borderWidth: 1
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false
+        }
+    });
+}
+
+function loadBarChartForAliranKeluar(data) {
+    const ctx = document.getElementById('barChart3').getContext('2d');
+    const labels = data.points.map(item => item.date); // Assuming date field is available
+    const values = data.points.map(item => item.value); // Adjust this depending on your response
+
+    new Chart(ctx, {
+        type: 'bar',
+        data: {
+            labels: labels,
+            datasets: [{
+                label: 'Aliran Mangsa Keluar',
+                data: values,
+                backgroundColor: 'rgba(75, 192, 192, 0.6)',
+                borderColor: 'rgba(75, 192, 192, 1)',
+                borderWidth: 1
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false
+        }
+    });
 }
 
 function displayCategoryChart(data, chartTitle, chartId) {
@@ -182,7 +257,7 @@ function displayData(data) {
         `;
     });
 
-    tableHTML += </tbody></table>;
+    tableHTML += `</tbody></table>`;
     tableContainer.innerHTML = tableHTML;
 }
 
